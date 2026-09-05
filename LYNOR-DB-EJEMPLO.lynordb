@@ -1,0 +1,328 @@
+{
+  "format": "LYNOR_DB",
+  "version": 1,
+  "databaseVersion": "DB-EJEMPLO-20260904",
+  "createdAt": "2026-09-04T15:45:00-06:00",
+  "totalProducts": 53,
+  "source": "LYNOR_PC_EJEMPLO",
+  "products": [
+    {
+      "client": "DART",
+      "code": "2-1213-01",
+      "description": "ROLLO 32J32 RLO",
+      "type": "RLL"
+    },
+    {
+      "client": "DART",
+      "code": "2-1213-10",
+      "description": "ROLLO 8J8",
+      "type": "RLL"
+    },
+    {
+      "client": "DART",
+      "code": "2-1213-25",
+      "description": "ROLLO 32SLMX PRUEBALO",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-554",
+      "description": "BOB CHECHOS QUESO CHEDDAR DE 3 KG",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-556",
+      "description": "CHECHOS CHILE DE 3 KG",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-562",
+      "description": "TORTILLIN ADOBO DE 12 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-575",
+      "description": "CHARRON HOT CHILI DE 9 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-588",
+      "description": "FRANCESA SALSA NEGRA DE 9 GR",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-589",
+      "description": "FRANCESA HOT CHILI DE 9 GR",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-608",
+      "description": "PALITOS HOT CHILI DE 8GR",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-609",
+      "description": "DONITAS SAL Y LIMON DE 6 GR",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-612",
+      "description": "PALITOS CHILE Y LIMON DE 8 GRS",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-613",
+      "description": "DONITAS CHILE Y LIMON DE 6G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-618",
+      "description": "DONITAS HOT CHILI DE 6 GRS",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-635",
+      "description": "DONITAS HOT CHILI DE 12 GR",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-637",
+      "description": "CHARRON HOT CHILI DE 15 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-638",
+      "description": "PELICULA UVA TORNILLO HOT CHILI DE 14 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-639",
+      "description": "BOLSA KIKYS AHUMADO DE 16 GRS",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-641",
+      "description": "PALITOS HOT CHILI DE 16 GRS",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-642",
+      "description": "FRANCESAS SAL NEG 14G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-643",
+      "description": "FRANCESAS HOT CHILI DE 14 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-645",
+      "description": "CHECHOS QUESO CHEDDAR DE 3 KG",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-651",
+      "description": "TORTILLIN ADOBO 15G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-652",
+      "description": "DONITAS CHILE Y LIMON DE 6 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-659",
+      "description": "PALITOS HOT CHILI DE 16 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-664",
+      "description": "CHECHITOS FRANCESAS SN DE 9 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-668",
+      "description": "PAPA FRANCESA HOT CHILI DE 9 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-669",
+      "description": "CHARRON HOT CHILI PERSONAL DE 9 GRS",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-670",
+      "description": "CHARRON HOT CHILI DE 15 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-671",
+      "description": "PALITOS HOT CHILI DE 16 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-672",
+      "description": "DONITAS HOT CHILI DE 6 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-673",
+      "description": "DONITAS HOT CHILI DE 12 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-674",
+      "description": "PALITOS HOT CHILI DE 8 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-675",
+      "description": "DONITAS SAL Y LIMÓN DE 6 G",
+      "type": "RLL"
+    },
+    {
+      "client": "GONAC",
+      "code": "2-1435-685",
+      "description": "CHECHOS",
+      "type": "PQ"
+    },
+    {
+      "client": "ALIMENTOS",
+      "code": "2-1696-58",
+      "description": "BOLSA DE BASURA GRANDE AZUL",
+      "type": "CJ"
+    },
+    {
+      "client": "ALSEA",
+      "code": "2-2005-51",
+      "description": "BOLSA VERDE",
+      "type": "CJ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-559",
+      "description": "CHIDAS DONITAS SAL Y LIMON 30 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-560",
+      "description": "CHIDAS PALITOS HOT CHILI 35 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-572",
+      "description": "OH RINGS CHILE LIMON 26 GR",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-600",
+      "description": "KIUBO DIPACHO 40 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-681",
+      "description": "KIUBO ROLLIX HOT CHILE 37 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-732",
+      "description": "CHIDAS MIX 55 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-783",
+      "description": "REMIX QUESO CHILE 35G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-832",
+      "description": "CHIDAS ADOBADAS 85 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-847",
+      "description": "CASERAS ZIGZAG 34 G",
+      "type": "PQ"
+    },
+    {
+      "client": "GONAC_LERKA",
+      "code": "2-2067-1435-848",
+      "description": "KIUBO CASERAS FUEGO 34 G",
+      "type": "PQ"
+    },
+    {
+      "client": "PANIF_ESPERANZA",
+      "code": "2-2103-10",
+      "description": "BOLSA NATURAL",
+      "type": "CJ"
+    },
+    {
+      "client": "PANIF_ESPERANZA",
+      "code": "2-2103-11",
+      "description": "HOJA GOFRADA BONPANE",
+      "type": "CJ"
+    },
+    {
+      "client": "PANIF_ESPERANZA",
+      "code": "2-2103-13",
+      "description": "HOJA GOFRADA LA ESPERANZA",
+      "type": "CJ"
+    },
+    {
+      "client": "PANIF_ESPERANZA",
+      "code": "2-2103-14",
+      "description": "BOLSA NATURAL 60X90",
+      "type": "PQ"
+    },
+    {
+      "client": "PANIF_ESPERANZA",
+      "code": "2-2103-5A",
+      "description": "BOLSA POLIPAPEL 26X32",
+      "type": "CJ"
+    },
+    {
+      "client": "CAMO",
+      "code": "2-2221-110",
+      "description": "CAMPO FRESCO PRUEBA",
+      "type": "RLL"
+    }
+  ]
+}

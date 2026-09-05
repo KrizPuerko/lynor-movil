@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b3a70">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LYNOR Móvil">
+<meta name="description" content="Terminal móvil offline de LYNOR para surtidos, tarimas y transferencias .lynorsync">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+<title>LYNOR Móvil</title>
+<style>
+:root{
+  --blue:#0b3a70;--blue2:#0d5fd2;--ink:#142033;--muted:#68778d;--bg:#eef3f8;
+  --card:#fff;--line:#d9e2ec;--green:#16813e;--red:#b42318;--amber:#a65b00;
+  --shadow:0 14px 40px rgba(20,42,68,.12);--r:18px;
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+body{min-height:100vh;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.appbar{position:sticky;top:0;z-index:40;background:linear-gradient(135deg,var(--blue),#082b55);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;box-shadow:0 8px 24px rgba(3,31,65,.22)}
+.appbar-row{display:flex;align-items:center;gap:10px;max-width:760px;margin:auto}.brandmark{width:42px;height:42px;border:2px solid rgba(255,255,255,.9);border-radius:12px;display:grid;place-items:center;font-weight:1000;font-size:20px}.brandcopy{flex:1;min-width:0}.brandcopy strong{display:block;font-size:18px}.brandcopy small{opacity:.78;font-size:10px}.status-pill{border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 9px;font-size:10px;font-weight:800;white-space:nowrap}.page{max-width:760px;margin:0 auto;padding:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 4px 18px rgba(20,42,68,.05);padding:16px;margin-bottom:12px}.hero-card{background:linear-gradient(135deg,#0b3a70,#1168f3);color:#fff;border:none}.hero-card p{margin:5px 0 0;opacity:.82;font-size:12px}.section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.section-title h2,.section-title h3{margin:0}.section-title h2{font-size:20px}.section-title h3{font-size:16px}.section-title p{margin:4px 0 0;color:var(--muted);font-size:11px}.eyebrow{display:block;font-size:9px;font-weight:900;letter-spacing:.12em;color:#5981ad;text-transform:uppercase;margin-bottom:4px}.hero-card .eyebrow{color:#cfe3ff}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.field{display:grid;gap:5px;margin-bottom:10px}.field>span{font-size:10px;font-weight:800;color:#586b82}.field input,.field select,.field textarea{width:100%;border:1px solid #cbd7e4;border-radius:12px;padding:12px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#4d91ed;box-shadow:0 0 0 3px rgba(17,104,243,.10)}.field textarea{min-height:72px;resize:vertical}.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:900;font-size:12px}.btn.primary{background:var(--blue2);color:#fff}.btn.dark{background:#11263d;color:#fff}.btn.green{background:#16813e;color:#fff}.btn.danger{background:#fff0f0;color:var(--red);border:1px solid #f0c6c2}.btn.ghost{background:#fff;color:#194d7c;border:1px solid #c9d8e7}.btn.block{width:100%}.btn.small{padding:8px 10px;font-size:10px}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions .btn{flex:1 1 140px}.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.kpi{background:#f7fafe;border:1px solid #dce7f1;border-radius:14px;padding:10px;min-width:0}.kpi span{display:block;color:var(--muted);font-size:9px}.kpi strong{display:block;margin-top:4px;color:#155ed2;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.list{display:grid;gap:8px}.item{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}.item-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.item strong{font-size:13px}.item p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.45}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:900;background:#edf7ef;color:var(--green)}.badge.warn{background:#fff4e7;color:var(--amber)}.badge.blue{background:#eaf2ff;color:#155ed2}.badge.red{background:#fff0f0;color:var(--red)}.empty{text-align:center;color:var(--muted);padding:20px 8px;font-size:11px}.mobile-nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid #d8e1eb;padding:7px 8px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.navbtn{border:0;background:transparent;border-radius:12px;padding:8px 4px;color:#64758b;font-size:9px;font-weight:800}.navbtn b{display:block;font-size:18px;line-height:1.1;margin-bottom:2px}.navbtn.active{background:#eaf2ff;color:#155ed2}.screen{display:none}.screen.active{display:block}.capture-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}.capture-head .btn{flex:0}.capture-title{flex:1;min-width:0}.capture-title h2{font-size:18px;margin:0}.capture-title p{margin:3px 0 0;color:var(--muted);font-size:10px}.pallet-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#102d4d;color:#fff;border-radius:16px;padding:14px;margin-bottom:12px}.pallet-banner span{font-size:10px;opacity:.75;display:block}.pallet-banner strong{font-size:22px}.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.mode-row label{border:1px solid #cbd8e5;background:#fff;border-radius:12px;padding:10px;display:flex;gap:8px;align-items:center;font-size:10px;font-weight:800}.product-box{background:#f4f8fc;border:1px dashed #b9cbe0;border-radius:14px;padding:11px;margin:-2px 0 10px}.product-box strong{font-size:12px;display:block}.product-box small{display:block;color:var(--muted);font-size:9px;margin-top:3px}.recent-row{display:grid;grid-template-columns:46px 1fr auto;gap:8px;align-items:center}.recent-num{width:46px;height:46px;border-radius:12px;background:#eaf2ff;color:#155ed2;display:grid;place-items:center;font-weight:900}.recent-row p{margin:2px 0}.danger-link{border:0;background:transparent;color:var(--red);font-weight:900;font-size:10px;padding:7px}.setup-wrap{min-height:calc(100vh - 90px);display:grid;place-items:center;padding:20px}.setup-card{width:min(520px,100%);background:#fff;border-radius:24px;box-shadow:var(--shadow);padding:22px}.setup-logo{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;display:grid;place-items:center;font-size:28px;font-weight:1000;margin-bottom:16px}.note{border:1px solid #cfe0ef;background:#f5f9fd;border-radius:13px;padding:10px 12px;font-size:10px;color:#4d6075;line-height:1.5}.note.warn{border-color:#efcf9f;background:#fff8ed;color:#80520b}.note.green{border-color:#b8dec5;background:#f1faf4;color:#25683a}.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);background:#10283f;color:#fff;border-radius:999px;padding:10px 14px;font-size:11px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:90;max-width:90%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.modal{position:fixed;inset:0;background:rgba(7,24,43,.56);z-index:100;display:grid;place-items:end center;padding:12px}.modal-card{background:#fff;border-radius:22px 22px 18px 18px;padding:18px;width:min(680px,100%);max-height:88vh;overflow:auto}.package-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f5f7fa;border:1px solid #dce2e8;border-radius:12px;padding:10px;font-size:10px;word-break:break-all}.subtle{color:var(--muted);font-size:10px}.hr{height:1px;background:#e3e9ef;margin:12px 0}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.grow{flex:1}.right{text-align:right}.mt8{margin-top:8px}.mt12{margin-top:12px}.mb0{margin-bottom:0}.red{color:var(--red)}.green-text{color:var(--green)}
+@media(max-width:520px){.page{padding:10px}.card{padding:13px;border-radius:15px}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(3,1fr)}.kpi strong{font-size:15px}.appbar{padding-left:10px;padding-right:10px}.brandcopy strong{font-size:16px}.status-pill{font-size:8px;padding:5px 7px}.actions .btn{flex-basis:120px}}
+</style>
+</head>
+<body>
+<div id="setupScreen" class="setup-wrap hidden">
+  <div class="setup-card">
+    <div class="setup-logo">L</div>
+    <span class="eyebrow">PRIMERA CONFIGURACIÓN</span>
+    <h1 style="margin:0 0 6px;font-size:24px">LYNOR Móvil</h1>
+    <p class="subtle" style="font-size:12px;margin:0 0 16px">Esta app guarda el trabajo localmente en este celular y genera paquetes <b>.lynorsync</b> para la computadora.</p>
+    <label class="field"><span>Tu usuario de LYNOR *</span><input id="setupUsername" autocomplete="off" placeholder="Ej. cristopher"></label>
+    <label class="field"><span>Tu nombre *</span><input id="setupName" autocomplete="name" placeholder="Ej. Cristopher"></label>
+    <div class="grid2">
+      <label class="field"><span>Perfil</span><select id="setupRole"><option>Operador</option><option>Supervisor</option></select></label>
+      <label class="field"><span>Nombre de este celular</span><input id="setupDeviceLabel" placeholder="Ej. iPhone Cristopher"></label>
+    </div>
+    <div class="note">La computadora seguirá siendo la base principal. La primera vez que importes un paquete de este celular, un Administrador de LYNOR deberá autorizar el dispositivo.</div>
+    <button id="finishSetupBtn" class="btn primary block mt12">Guardar y entrar</button>
+  </div>
+</div>
+
+<div id="appShell" class="hidden">
+<header class="appbar">
+  <div class="appbar-row">
+    <div class="brandmark">L</div>
+    <div class="brandcopy"><strong>LYNOR Móvil</strong><small id="topUser">—</small></div>
+    <span class="status-pill">APP · OFFLINE</span>
+  </div>
+</header>
+
+<main class="page">
+  <section id="screen-home" class="screen active">
+    <div class="card hero-card">
+      <span class="eyebrow">TERMINAL MÓVIL</span>
+      <h2 style="margin:0">Captura sin depender de la PC</h2>
+      <p>Trabaja aquí y después manda el archivo .lynorsync por WhatsApp.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span>EN PROCESO</span><strong id="homeInProgress">0</strong></div>
+      <div class="kpi"><span>FINALIZADOS</span><strong id="homeFinished">0</strong></div>
+      <div class="kpi"><span>DISPOSITIVO</span><strong id="homeDevice">—</strong></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">NUEVO</span><h3>Crear surtido</h3><p>Si trabajan varios celulares en el mismo surtido, usen exactamente el mismo Código de equipo.</p></div></div>
+      <label class="field"><span>Destino / área</span><input id="newDestination" placeholder="Ej. Almacén PT"></label>
+      <label class="field"><span>Referencia</span><input id="newReference" placeholder="Pedido, ruta o referencia opcional"></label>
+      <div class="grid2">
+        <label class="field"><span>Código de equipo</span><input id="newTeamKey" autocapitalize="characters" placeholder="Ej. EQUIPO-0409-A"></label>
+        <label class="field"><span>Tarima inicial *</span><input id="newStartPallet" type="number" min="1" value="1" inputmode="numeric"></label>
+      </div>
+      <div class="note warn">Ejemplo: tú empiezas en Tarima 1 y tu compañero en Tarima 6. Ambos ponen el mismo Código de equipo. Al importar, LYNOR PC fusiona las tarimas.</div>
+      <button id="createSurtidoBtn" class="btn primary block mt12">+ Crear surtido y abrir tarima</button>
+    </div>
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">GUARDADOS EN ESTE CELULAR</span><h3>Surtidos</h3></div><button id="exportAllBtn" class="btn ghost small">Exportar todo</button></div>
+      <div id="surtidoList" class="list"></div>
+    </div>
+  </section>
+
+  <section id="screen-capture" class="screen">
+    <div class="capture-head">
+      <button id="backHomeBtn" class="btn ghost small">← Volver</button>
+      <div class="capture-title"><h2 id="activeFolio">—</h2><p id="activeMeta">—</p></div>
+      <span id="activeStatus" class="badge warn">En proceso</span>
+    </div>
+    <div class="pallet-banner">
+      <div><span>TARIMA ACTUAL</span><strong id="currentPalletLabel">1</strong></div>
+      <div class="right"><span>TOTAL SURTIDO</span><strong id="surtidoKgBanner">0.00 KG</strong></div>
+    </div>
+    <div id="captureClosedNotice" class="card hidden">
+      <div class="note green">La tarima actual está cerrada. Puedes crear la siguiente tarima o finalizar el surtido si ya terminaste.</div>
+      <div class="actions mt12"><button id="newPalletBtn" class="btn primary">+ Crear siguiente tarima</button><button id="finalizeBtn" class="btn green">Finalizar surtido</button></div>
+    </div>
+    <div id="captureFormCard" class="card">
+      <div class="section-title"><div><span class="eyebrow">CAPTURA MANUAL</span><h3>Agregar material</h3></div></div>
+      <label class="field"><span>Clave *</span><input id="matCode" list="productCodes" autocapitalize="characters" autocomplete="off" placeholder="Ej. 2-1435-588"><datalist id="productCodes"></datalist></label>
+      <div id="productInfo" class="product-box hidden"><strong id="productDescPreview"></strong><small id="productClientPreview"></small></div>
+      <div class="grid2">
+        <label class="field"><span>Descripción *</span><input id="matDescription" placeholder="Descripción del producto"></label>
+        <label class="field"><span>Cliente</span><input id="matClient" placeholder="Cliente"></label>
+      </div>
+      <div class="grid2">
+        <label class="field"><span>Tipo *</span><select id="matType"><option value="RLL">RLL</option><option value="PQ">PQ</option><option value="CJ">CJ</option><option value="CJA">CJA</option><option value="OTRO">OTRO</option></select></label>
+        <label class="field"><span>O.T. / Lote *</span><input id="matLot" autocapitalize="characters" placeholder="Lote"></label>
+      </div>
+      <label id="materialDateField" class="field hidden"><span>Fecha del material *</span><input id="matDate" type="date"></label>
+      <div id="rollModeBox" class="mode-row">
+        <label><input type="radio" name="rollMode" value="individual" checked> Rollo por rollo</label>
+        <label><input type="radio" name="rollMode" value="total"> Cantidad total</label>
+      </div>
+      <div class="grid2">
+        <label id="quantityField" class="field"><span id="qtyLabel">Cantidad *</span><input id="matQuantity" type="number" min="0" step="1" inputmode="decimal" value="1"></label>
+        <label class="field"><span id="weightLabel">Peso del rollo (kg) *</span><input id="matWeight" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></label>
+      </div>
+      <label id="millField" class="field hidden"><span>Millares</span><input id="matMill" type="number" min="0" step="0.001" inputmode="decimal" placeholder="0.000"></label>
+      <label class="field"><span>Notas</span><textarea id="matNotes" placeholder="Opcional"></textarea></label>
+      <button id="addMovementBtn" class="btn primary block">+ Agregar a Tarima</button>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span>CANTIDAD TARIMA</span><strong id="palletQty">0</strong></div>
+      <div class="kpi"><span>KG TARIMA</span><strong id="palletKg">0.00</strong></div>
+      <div class="kpi"><span>MILL TARIMA</span><strong id="palletMill">0.000</strong></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">TARIMA ACTUAL</span><h3>Capturas recientes</h3></div><button id="closePalletBtn" class="btn dark small">Cerrar tarima</button></div>
+      <div id="movementList" class="list"></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">TRANSFERENCIA</span><h3>Mandar a la PC</h3><p>Puedes exportar aunque el surtido siga en proceso.</p></div></div>
+      <button id="exportCurrentBtn" class="btn green block">Compartir .lynorsync</button>
+    </div>
+  </section>
+
+  <section id="screen-transfer" class="screen">
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">TRANSFERENCIA</span><h2>Paquetes para LYNOR PC</h2><p>La PC importa estos archivos desde la pestaña Transferencias.</p></div></div>
+      <div class="note green"><b>Flujo:</b> Exportar → elegir WhatsApp → enviarte el archivo → descargarlo en la PC → LYNOR → Transferencias → Seleccionar paquete LYNOR.</div>
+      <div class="actions mt12"><button id="transferExportAllBtn" class="btn primary">Exportar todos</button><button id="transferExportActiveBtn" class="btn ghost">Exportar actual</button></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">HISTORIAL LOCAL</span><h3>Últimos paquetes generados</h3></div></div>
+      <div id="packageHistory" class="list"></div>
+    </div>
+  </section>
+
+  <section id="screen-settings" class="screen">
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">DISPOSITIVO</span><h2>Configuración</h2></div></div>
+      <label class="field"><span>Usuario</span><input id="settingsUsername"></label>
+      <label class="field"><span>Nombre</span><input id="settingsName"></label>
+      <div class="grid2"><label class="field"><span>Perfil</span><select id="settingsRole"><option>Operador</option><option>Supervisor</option></select></label><label class="field"><span>Nombre del celular</span><input id="settingsDeviceLabel"></label></div>
+      <div class="note"><b>ID del dispositivo:</b><div id="settingsDeviceId" class="package-code mt8"></div></div>
+      <button id="saveSettingsBtn" class="btn primary block mt12">Guardar cambios</button>
+    </div>
+    
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">INSTALACIÓN</span><h3>Usar como app en iPhone</h3><p>Abre esta página en Safari, toca Compartir y elige “Agregar a pantalla de inicio”. Después podrás abrir LYNOR desde su icono y trabajar sin conexión.</p></div></div>
+      <div class="note green"><b>Modo offline:</b> después de abrir la app al menos una vez con Internet, LYNOR guarda los archivos necesarios para iniciar sin señal. Tus surtidos y la base móvil permanecen guardados localmente.</div>
+    </div>
+
+<div class="card">
+      <div class="section-title"><div><span class="eyebrow">BASE DE DATOS</span><h3>Productos del celular</h3><p>Actualiza esta copia cuando cambie la base de LYNOR PC. Tus surtidos no se borran.</p></div></div>
+      <div class="grid3">
+        <div class="kpi"><span>PRODUCTOS</span><strong id="mobileDbCount">0</strong></div>
+        <div class="kpi"><span>VERSIÓN</span><strong id="mobileDbVersion" style="font-size:12px">—</strong></div>
+        <div class="kpi"><span>ACTUALIZADA</span><strong id="mobileDbUpdated" style="font-size:12px">—</strong></div>
+      </div>
+      <div id="mobileDbMessage" class="note mt12">Usando la base integrada del archivo.</div>
+      <div class="actions mt12">
+        <button id="importMobileDbBtn" class="btn primary">Actualizar .lynordb</button>
+        <button id="restoreMobileDbBtn" class="btn ghost">Restaurar base anterior</button>
+      </div>
+      <input id="mobileDbFile" type="file" accept=".lynordb,application/json" class="hidden">
+    </div>
+
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">SEGURIDAD LOCAL</span><h3>Respaldo del celular</h3><p>Úsalo antes de borrar archivos, cambiar de navegador o cambiar de teléfono.</p></div></div>
+      <div class="actions"><button id="backupBtn" class="btn ghost">Exportar respaldo</button><button id="restoreBtn" class="btn ghost">Importar respaldo</button></div>
+      <input id="restoreFile" type="file" accept=".lynorbackup,application/json" class="hidden">
+    </div>
+    <div class="card">
+      <div class="section-title"><div><span class="eyebrow">LIMPIEZA</span><h3>Datos locales</h3></div></div>
+      <button id="clearFinishedBtn" class="btn danger block">Borrar surtidos finalizados de este celular</button>
+    </div>
+  </section>
+</main>
+
+<nav class="mobile-nav">
+  <button class="navbtn active" data-screen="home"><b>⌂</b>Inicio</button>
+  <button class="navbtn" data-screen="capture"><b>▣</b>Captura</button>
+  <button class="navbtn" data-screen="transfer"><b>⇄</b>Transferir</button>
+  <button class="navbtn" data-screen="settings"><b>⚙</b>Ajustes</button>
+</nav>
+</div>
+
+<div id="confirmModal" class="modal hidden"><div class="modal-card"><span class="eyebrow">CONFIRMAR</span><h3 id="modalTitle" style="margin:0 0 8px"></h3><p id="modalText" class="subtle" style="font-size:12px"></p><div class="actions mt12"><button id="modalCancel" class="btn ghost">Cancelar</button><button id="modalConfirm" class="btn dark">Confirmar</button></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const EMBEDDED_PRODUCTS = [{"client":"DART","code":"2-1213-01","description":"ROLLO 32J32 RLO","type":"RLL"},{"client":"DART","code":"2-1213-10","description":"ROLLO 8J8","type":"RLL"},{"client":"DART","code":"2-1213-25","description":"ROLLO 32SLMX PRUEBALO","type":"RLL"},{"client":"GONAC","code":"2-1435-554","description":"BOB CHECHOS QUESO CHEDDAR DE 3 KG","type":"RLL"},{"client":"GONAC","code":"2-1435-556","description":"CHECHOS CHILE DE 3 KG","type":"RLL"},{"client":"GONAC","code":"2-1435-562","description":"TORTILLIN ADOBO DE 12 G","type":"RLL"},{"client":"GONAC","code":"2-1435-575","description":"CHARRON HOT CHILI DE 9 G","type":"RLL"},{"client":"GONAC","code":"2-1435-588","description":"FRANCESA SALSA NEGRA DE 9 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-589","description":"FRANCESA HOT CHILI DE 9 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-608","description":"PALITOS HOT CHILI DE 8GR","type":"RLL"},{"client":"GONAC","code":"2-1435-609","description":"DONITAS SAL Y LIMON DE 6 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-612","description":"PALITOS CHILE Y LIMON DE 8 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-613","description":"DONITAS CHILE Y LIMON DE 6G","type":"RLL"},{"client":"GONAC","code":"2-1435-618","description":"DONITAS HOT CHILI DE 6 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-635","description":"DONITAS HOT CHILI DE 12 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-637","description":"CHARRON HOT CHILI DE 15 G","type":"RLL"},{"client":"GONAC","code":"2-1435-638","description":"PELICULA UVA TORNILLO HOT CHILI DE 14 G","type":"RLL"},{"client":"GONAC","code":"2-1435-639","description":"BOLSA KIKYS AHUMADO DE 16 GRS","type":"PQ"},{"client":"GONAC","code":"2-1435-641","description":"PALITOS HOT CHILI DE 16 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-642","description":"FRANCESAS SAL NEG 14G","type":"RLL"},{"client":"GONAC","code":"2-1435-643","description":"FRANCESAS HOT CHILI DE 14 G","type":"RLL"},{"client":"GONAC","code":"2-1435-645","description":"CHECHOS QUESO CHEDDAR DE 3 KG","type":"RLL"},{"client":"GONAC","code":"2-1435-651","description":"TORTILLIN ADOBO 15G","type":"RLL"},{"client":"GONAC","code":"2-1435-652","description":"DONITAS CHILE Y LIMON DE 6 G","type":"RLL"},{"client":"GONAC","code":"2-1435-659","description":"PALITOS HOT CHILI DE 16 G","type":"RLL"},{"client":"GONAC","code":"2-1435-664","description":"CHECHITOS FRANCESAS SN DE 9 G","type":"RLL"},{"client":"GONAC","code":"2-1435-668","description":"PAPA FRANCESA HOT CHILI DE 9 G","type":"RLL"},{"client":"GONAC","code":"2-1435-669","description":"CHARRON HOT CHILI PERSONAL DE 9 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-670","description":"CHARRON HOT CHILI DE 15 G","type":"RLL"},{"client":"GONAC","code":"2-1435-671","description":"PALITOS HOT CHILI DE 16 G","type":"RLL"},{"client":"GONAC","code":"2-1435-672","description":"DONITAS HOT CHILI DE 6 G","type":"RLL"},{"client":"GONAC","code":"2-1435-673","description":"DONITAS HOT CHILI DE 12 G","type":"RLL"},{"client":"GONAC","code":"2-1435-674","description":"PALITOS HOT CHILI DE 8 G","type":"RLL"},{"client":"GONAC","code":"2-1435-675","description":"DONITAS SAL Y LIMÓN DE 6 G","type":"RLL"},{"client":"GONAC","code":"2-1435-685","description":"CHECHOS","type":"PQ"},{"client":"ALIMENTOS","code":"2-1696-58","description":"BOLSA DE BASURA GRANDE AZUL","type":"CJ"},{"client":"ALSEA","code":"2-2005-51","description":"BOLSA VERDE","type":"CJ"},{"client":"GONAC_LERKA","code":"2-2067-1435-559","description":"CHIDAS DONITAS SAL Y LIMON 30 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-560","description":"CHIDAS PALITOS HOT CHILI 35 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-572","description":"OH RINGS CHILE LIMON 26 GR","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-600","description":"KIUBO DIPACHO 40 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-681","description":"KIUBO ROLLIX HOT CHILE 37 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-732","description":"CHIDAS MIX 55 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-783","description":"REMIX QUESO CHILE 35G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-832","description":"CHIDAS ADOBADAS 85 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-847","description":"CASERAS ZIGZAG 34 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-848","description":"KIUBO CASERAS FUEGO 34 G","type":"PQ"},{"client":"PANIF_ESPERANZA","code":"2-2103-10","description":"BOLSA NATURAL","type":"CJ"},{"client":"PANIF_ESPERANZA","code":"2-2103-11","description":"HOJA GOFRADA BONPANE","type":"CJ"},{"client":"PANIF_ESPERANZA","code":"2-2103-13","description":"HOJA GOFRADA LA ESPERANZA","type":"CJ"},{"client":"PANIF_ESPERANZA","code":"2-2103-14","description":"BOLSA NATURAL 60X90","type":"PQ"},{"client":"PANIF_ESPERANZA","code":"2-2103-5A","description":"BOLSA POLIPAPEL 26X32","type":"CJ"},{"client":"CAMO","code":"2-2221-110","description":"CAMPO FRESCO PRUEBA","type":"RLL"}];
+let PRODUCTS = EMBEDDED_PRODUCTS.slice();
+const STORAGE_KEY='lynor-mobile-standalone-v1';
+const DEVICE_KEY='lynor-mobile-standalone-device-v1';
+const PACKAGE_HISTORY_KEY='lynor-mobile-package-history-v1';
+const MOBILE_DB_KEY='lynor-mobile-products-db-v1';
+const MOBILE_DB_BACKUP_KEY='lynor-mobile-products-db-backup-v1';
+const FORMAT='LYNOR_SYNC';
+const $=id=>document.getElementById(id);
+const clone=v=>JSON.parse(JSON.stringify(v));
+const now=()=>new Date().toISOString();
+const norm=v=>String(v??'').trim().toUpperCase();
+const num=v=>{const n=Number(String(v??'').replace(',','.'));return Number.isFinite(n)?n:0};
+const fmt=(v,d=2)=>num(v).toLocaleString('es-MX',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+function cleanMobileProduct(raw){
+  if(!raw||typeof raw!=='object')return null;
+  const code=String(raw.code||'').trim();
+  const description=String(raw.description||raw.product||'').trim();
+  const client=String(raw.client||'').trim();
+  const type=String(raw.type||raw.productType||'RLL').trim().toUpperCase();
+  if(!code||!description)return null;
+  return{code,description,client,type:['RLL','PQ','CJ','CJA','OTRO'].includes(type)?type:'OTRO'};
+}
+function validateMobileDbObject(obj){
+  if(!obj||typeof obj!=='object'||Array.isArray(obj))throw new Error('Archivo de base inválido');
+  if(obj.format!=='LYNOR_DB')throw new Error('Este archivo no es una base LYNOR (.lynordb)');
+  if(!Array.isArray(obj.products)||!obj.products.length)throw new Error('La base no contiene productos');
+  const products=[];const codes=new Set();
+  for(const raw of obj.products){
+    const p=cleanMobileProduct(raw);
+    if(!p)throw new Error('La base contiene un producto incompleto');
+    const k=norm(p.code);
+    if(codes.has(k))throw new Error(`Clave duplicada en la base: ${p.code}`);
+    codes.add(k);products.push(p);
+  }
+  products.sort((a,b)=>norm(a.code).localeCompare(norm(b.code)));
+  return{
+    format:'LYNOR_DB',version:1,
+    databaseVersion:String(obj.databaseVersion||obj.dbVersion||'SIN-VERSION'),
+    createdAt:String(obj.createdAt||now()),
+    totalProducts:products.length,
+    source:String(obj.source||'ARCHIVO'),
+    products
+  };
+}
+function integratedMobileDb(){
+  return{
+    format:'LYNOR_DB',version:1,databaseVersion:'INTEGRADA-V3.2.4',
+    createdAt:'2026-09-04T00:00:00.000Z',totalProducts:EMBEDDED_PRODUCTS.length,
+    source:'INTEGRADA',products:EMBEDDED_PRODUCTS.map(cleanMobileProduct).filter(Boolean)
+  };
+}
+function loadMobileDb(){
+  try{
+    const raw=localStorage.getItem(MOBILE_DB_KEY);
+    if(raw)return validateMobileDbObject(JSON.parse(raw));
+  }catch(e){console.warn('Base móvil guardada inválida',e)}
+  return integratedMobileDb();
+}
+let mobileDb=loadMobileDb();
+PRODUCTS=mobileDb.products.slice();
+function saveMobileDb(db){
+  mobileDb=validateMobileDbObject(db);
+  PRODUCTS=mobileDb.products.slice();
+  localStorage.setItem(MOBILE_DB_KEY,JSON.stringify(mobileDb));
+  initDatalist();renderMobileDbInfo();
+}
+function shortDbDate(value){
+  const d=new Date(value);if(Number.isNaN(d.getTime()))return '—';
+  return d.toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'2-digit'});
+}
+function renderMobileDbInfo(){
+  if(!$('mobileDbCount'))return;
+  $('mobileDbCount').textContent=String(PRODUCTS.length);
+  $('mobileDbVersion').textContent=String(mobileDb.databaseVersion||'—').replace(/^DB-/,'');
+  $('mobileDbUpdated').textContent=shortDbDate(mobileDb.createdAt);
+  $('mobileDbMessage').innerHTML=`<b>${esc(mobileDb.databaseVersion||'Base')}</b> · ${PRODUCTS.length} productos · ${esc(mobileDb.source||'')}`;
+  const hasBackup=!!localStorage.getItem(MOBILE_DB_BACKUP_KEY);
+  $('restoreMobileDbBtn').disabled=!hasBackup;
+}
+async function importMobileDbFile(file){
+  if(!file)return;
+  try{
+    const obj=JSON.parse((await file.text()).replace(/^\uFEFF/,''));
+    const next=validateMobileDbObject(obj);
+    const current=mobileDb;
+    confirmAction('Actualizar base de productos',`${current.totalProducts||PRODUCTS.length} productos → ${next.totalProducts} productos. Los surtidos guardados no se modificarán.`,()=>{
+      try{
+        localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(current));
+        saveMobileDb(next);
+        toast(`Base actualizada: ${next.totalProducts} productos`);
+      }catch(e){toast(e.message||'No se pudo guardar la base')}
+    });
+  }catch(e){toast(e.message||'No se pudo leer la base .lynordb')}
+}
+function restorePreviousMobileDb(){
+  try{
+    const raw=localStorage.getItem(MOBILE_DB_BACKUP_KEY);
+    if(!raw)return toast('No hay una base anterior guardada');
+    const previous=validateMobileDbObject(JSON.parse(raw));
+    confirmAction('Restaurar base anterior',`Volver a ${previous.databaseVersion} · ${previous.totalProducts} productos.`,()=>{
+      const current=mobileDb;
+      saveMobileDb(previous);
+      localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(current));
+      toast('Base anterior restaurada');
+    });
+  }catch(e){toast(e.message||'No se pudo restaurar la base')}
+}
+
+function token(bytes=6){
+  try{const a=new Uint8Array(bytes);crypto.getRandomValues(a);return [...a].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}catch{return Math.random().toString(36).slice(2,2+bytes*2).toUpperCase()}
+}
+function uid(prefix){return `${prefix}-${Date.now().toString(36).toUpperCase()}-${token(5)}`}
+function deviceId(){let id=localStorage.getItem(DEVICE_KEY)||'';if(!id){id=`MOV-${token(4)}`;localStorage.setItem(DEVICE_KEY,id)}return id}
+function defaultState(){return{version:1,profile:null,activeSurtidoId:'',currentPallet:1,surtidos:[],savedAt:now()}}
+function load(){try{return{...defaultState(),...JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')}}catch{return defaultState()}}
+let state=load();
+function save(){state.savedAt=now();try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){toast('No se pudo guardar localmente. Exporta un respaldo.')}render()}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2600)}
+function activeSurtido(){return state.surtidos.find(s=>s.id===state.activeSurtidoId)||null}
+function palletsOf(s){return [...(s?.pallets||[])].sort((a,b)=>Number(a.number)-Number(b.number))}
+function openPallet(s){return palletsOf(s).find(p=>p.status!=='Cerrada')||null}
+function movementsOf(s){return (s?.movements||[]).filter(m=>!m.deleted)}
+function palletMoves(s,n){return movementsOf(s).filter(m=>Number(m.pallet)===Number(n))}
+function sums(ms){return{quantity:ms.reduce((a,m)=>a+num(m.quantity||1),0),kg:ms.reduce((a,m)=>a+num(m.weight),0),mill:ms.reduce((a,m)=>a+num(m.mill),0)}}
+function productByCode(code){const k=norm(code);return PRODUCTS.find(p=>norm(p.code)===k)||null}
+function productUsesDate(p){if(!p)return false;const parts=String(p.code||'').split('-');return parts.includes('1435')&&['RLL','PQ'].includes(norm(p.type))}
+function shiftLabel(){const h=new Date().getHours();return(h>=19||h<9)?'Turno nocturno':'Turno matutino'}
+function localFolio(){const d=new Date();const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'),hh=String(d.getHours()).padStart(2,'0'),mm=String(d.getMinutes()).padStart(2,'0');return `SUR-OFF-${y}${m}${day}-${hh}${mm}-${token(2)}`}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function dateTime(v){if(!v)return'—';try{return new Date(v).toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'})}catch{return String(v)}}
+function setScreen(name){document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===`screen-${name}`));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));if(name==='capture'&&!activeSurtido()){name='home';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id==='screen-home'));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.screen==='home'))}render()}
+function setupCheck(){const ok=state.profile?.username&&state.profile?.name;$('setupScreen').classList.toggle('hidden',!!ok);$('appShell').classList.toggle('hidden',!ok);if(ok)render()}
+function finishSetup(){const username=$('setupUsername').value.trim(),name=$('setupName').value.trim();if(!username||!name)return toast('Captura usuario y nombre');state.profile={username,name,role:$('setupRole').value||'Operador',deviceLabel:$('setupDeviceLabel').value.trim()||'Celular'};save();setupCheck();toast('LYNOR Móvil listo')}
+function createSurtido(){const start=Math.max(1,Math.floor(num($('newStartPallet').value)||1));const team=norm($('newTeamKey').value);const created=now();const s={id:uid('OFFSUR'),folio:localFolio(),destination:$('newDestination').value.trim(),reference:$('newReference').value.trim(),teamKey:team,shift:shiftLabel(),status:'En proceso',createdAt:created,createdBy:state.profile.name,createdByUser:state.profile.username,createdDeviceId:deviceId(),offlineCreated:true,pallets:[{number:start,status:'Abierta',createdAt:created,createdBy:state.profile.name,deviceId:deviceId()}],movements:[]};state.surtidos.unshift(s);state.activeSurtidoId=s.id;state.currentPallet=start;$('newDestination').value='';$('newReference').value='';$('newTeamKey').value='';$('newStartPallet').value='1';save();setScreen('capture');toast(`Surtido creado · Tarima ${start}`)}
+function openSurtido(id){const s=state.surtidos.find(x=>x.id===id);if(!s)return;state.activeSurtidoId=id;const open=openPallet(s);state.currentPallet=open?.number||Math.max(1,...palletsOf(s).map(p=>Number(p.number)||1));save();setScreen('capture')}
+function updateProduct(){const code=$('matCode').value;const p=productByCode(code);if(p){$('matDescription').value=p.description||'';$('matClient').value=p.client||'';$('matType').value=['RLL','PQ','CJ','CJA'].includes(norm(p.type))?norm(p.type):'OTRO';$('productDescPreview').textContent=p.description||p.code;$('productClientPreview').textContent=`${p.client||'Sin cliente'} · ${p.type||''}`;$('productInfo').classList.remove('hidden')}else{$('productInfo').classList.add('hidden')}updateCaptureFields()}
+function currentProduct(){return{code:norm($('matCode').value),description:$('matDescription').value.trim(),client:$('matClient').value.trim(),type:norm($('matType').value)}}
+function updateCaptureFields(){const p=currentProduct();const isRoll=p.type==='RLL';const individual=document.querySelector('input[name="rollMode"]:checked')?.value!=='total';$('rollModeBox').classList.toggle('hidden',!isRoll);$('millField').classList.toggle('hidden',isRoll);$('materialDateField').classList.toggle('hidden',!productUsesDate(p));if(isRoll&&individual){$('quantityField').classList.add('hidden');$('matQuantity').value='1';$('weightLabel').textContent='Peso del rollo (kg) *'}else{$('quantityField').classList.remove('hidden');$('qtyLabel').textContent=isRoll?'Cantidad de rollos *':p.type==='PQ'?'Cantidad de paquetes *':['CJ','CJA'].includes(p.type)?'Cantidad de cajas *':'Cantidad *';$('weightLabel').textContent='Peso total (kg) *'}}
+function addMovement(){const s=activeSurtido();if(!s||s.status!=='En proceso')return toast('No hay surtido abierto');const pal=openPallet(s);if(!pal)return toast('Primero crea una tarima abierta');const p=currentProduct();if(!p.code)return toast('Captura la clave');if(!p.description)return toast('Captura la descripción');const lot=$('matLot').value.trim();if(!lot)return toast('Captura la O.T. / lote');const date=$('matDate').value||'';if(productUsesDate(p)&&!date)return toast('Este material requiere fecha');const isRoll=p.type==='RLL';const captureMode=isRoll?(document.querySelector('input[name="rollMode"]:checked')?.value==='total'?'total':'individual'):'total';const quantity=isRoll&&captureMode==='individual'?1:num($('matQuantity').value);const weight=num($('matWeight').value);const mill=isRoll?0:num($('matMill').value);if(quantity<=0)return toast('Captura una cantidad válida');if(weight<=0)return toast(isRoll&&captureMode==='individual'?'Captura el peso del rollo':'Captura el peso total');const m={id:uid('MOV'),pallet:Number(pal.number),code:p.code,product:p.description,client:p.client,productType:p.type,lot,materialDate:date,quantity,weight,mill,captureMode,notes:$('matNotes').value.trim(),source:'Manual',capturedAt:now(),operator:state.profile.name||state.profile.username,operatorUsername:state.profile.username,deviceId:deviceId(),confirmedAt:now(),confirmedBy:state.profile.name,deleted:false};s.movements.push(m);state.currentPallet=pal.number;const keepCode=p.code,keepDesc=p.description,keepClient=p.client,keepType=p.type,keepLot=lot;$('matWeight').value='';$('matMill').value='';$('matNotes').value='';if(captureMode!=='individual')$('matQuantity').value='';$('matCode').value=keepCode;$('matDescription').value=keepDesc;$('matClient').value=keepClient;$('matType').value=keepType;$('matLot').value=keepLot;save();setTimeout(()=>$('matWeight').focus(),50);toast('Material agregado')}
+function deleteMovement(id){const s=activeSurtido();const m=s?.movements.find(x=>x.id===id);if(!m)return;confirmAction('Quitar captura',`${m.code} · ${fmt(m.weight)} KG`,()=>{m.deleted=true;m.deletedAt=now();m.deletedBy=state.profile.name;save();toast('Captura retirada')})}
+function closePallet(){const s=activeSurtido(),pal=openPallet(s);if(!s||!pal)return toast('No hay tarima abierta');const count=palletMoves(s,pal.number).length;confirmAction(`Cerrar Tarima ${pal.number}`,count?`Tiene ${count} captura(s). Después ya no podrás agregar material a esta tarima.`:'Esta tarima está vacía. ¿Cerrar de todos modos?',()=>{pal.status='Cerrada';pal.closedAt=now();pal.closedBy=state.profile.name;save();toast(`Tarima ${pal.number} cerrada`)})}
+function newPallet(){const s=activeSurtido();if(!s||s.status!=='En proceso')return;const open=openPallet(s);if(open)return toast(`Primero cierra Tarima ${open.number}`);const n=Math.max(0,...palletsOf(s).map(p=>Number(p.number)||0))+1;s.pallets.push({number:n,status:'Abierta',createdAt:now(),createdBy:state.profile.name,deviceId:deviceId()});state.currentPallet=n;save();toast(`Tarima ${n} abierta`)}
+function finalize(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)return toast(`Primero cierra Tarima ${open.number}`);if(!movementsOf(s).length)return toast('El surtido no tiene capturas');confirmAction('Finalizar surtido','Se marcará como finalizado y quedará listo para exportar a la PC.',()=>{s.status='Finalizado';s.finalizedAt=now();s.finalizedBy=state.profile.name;s.finalKg=sums(movementsOf(s)).kg;save();toast('Surtido finalizado')})}
+function packageHistory(){try{const a=JSON.parse(localStorage.getItem(PACKAGE_HISTORY_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return[]}}
+function savePackageHistory(rec){const a=packageHistory();a.unshift(rec);try{localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(a.slice(0,30)))}catch{}render()}
+function buildPackage(scope='all') {let surtidos=scope==='active'?(activeSurtido()?[activeSurtido()]:[]):state.surtidos.filter(s=>movementsOf(s).length||s.pallets.length);return{format:FORMAT,version:1,packageId:uid('PKG'),createdAt:now(),device:{id:deviceId(),label:state.profile.deviceLabel||'Celular',platform:navigator.platform||navigator.userAgent||''},operator:{username:state.profile.username,name:state.profile.name,role:state.profile.role||'Operador'},activeSurtidoId:state.activeSurtidoId,pending:[],surtidos:clone(surtidos)}}
+async function shareBlob(blob,filename,title){const file=new File([blob],filename,{type:'application/json'});try{if(navigator.canShare?.({files:[file]})){await navigator.share({title,text:'Transferencia de LYNOR Móvil',files:[file]});return 'shared'}}catch(e){if(e?.name==='AbortError')return'abort'}try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);return'download'}catch{return'failed'}}
+async function exportPackage(scope='all'){const pack=buildPackage(scope);if(!pack.surtidos.length)return toast('No hay surtidos para exportar');const first=pack.surtidos[0];const safe=String(first?.folio||'LYNOR').replace(/[^A-Za-z0-9_-]+/g,'-');const filename=`${safe}_${deviceId()}.lynorsync`;const blob=new Blob([JSON.stringify(pack,null,2)],{type:'application/json'});const result=await shareBlob(blob,filename,'Paquete LYNOR');if(result==='abort')return;if(result==='failed'){showPackageText(pack);return}savePackageHistory({packageId:pack.packageId,filename,createdAt:pack.createdAt,count:pack.surtidos.length});toast(result==='shared'?'Paquete listo para compartir':'Paquete .lynorsync generado')}
+function showPackageText(pack){const w=window.open('','_blank');if(w){w.document.write(`<pre>${esc(JSON.stringify(pack,null,2))}</pre>`);w.document.close()}else{toast('No se pudo generar el archivo en este navegador')}}
+function exportBackup(){const payload={format:'LYNOR_MOBILE_BACKUP',version:2,createdAt:now(),deviceId:deviceId(),state:clone(state),packages:packageHistory(),database:clone(mobileDb),databaseBackup:(()=>{try{const r=localStorage.getItem(MOBILE_DB_BACKUP_KEY);return r?JSON.parse(r):null}catch{return null}})()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});shareBlob(blob,`LYNOR-MOVIL-RESPALDO-${deviceId()}.lynorbackup`,'Respaldo LYNOR Móvil')}
+async function restoreBackup(file){if(!file)return;try{const obj=JSON.parse(await file.text());if(obj.format!=='LYNOR_MOBILE_BACKUP'||!obj.state)throw new Error('Respaldo inválido');confirmAction('Restaurar respaldo','Se reemplazarán los datos locales actuales de este navegador.',()=>{state=obj.state;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));if(Array.isArray(obj.packages))localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(obj.packages));if(obj.database){try{saveMobileDb(obj.database)}catch{}}if(obj.databaseBackup){try{localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(validateMobileDbObject(obj.databaseBackup)))}catch{}}setupCheck();render();renderMobileDbInfo();toast('Respaldo restaurado')})}catch(e){toast(e.message||'No se pudo leer el respaldo')}}
+function saveSettings(){const u=$('settingsUsername').value.trim(),n=$('settingsName').value.trim();if(!u||!n)return toast('Usuario y nombre son obligatorios');state.profile={...state.profile,username:u,name:n,role:$('settingsRole').value,deviceLabel:$('settingsDeviceLabel').value.trim()||'Celular'};save();toast('Configuración guardada')}
+function clearFinished(){const count=state.surtidos.filter(s=>s.status==='Finalizado').length;if(!count)return toast('No hay surtidos finalizados');confirmAction('Borrar surtidos finalizados',`Se eliminarán ${count} surtido(s) de este celular. Haz un respaldo antes si quieres conservarlos.`,()=>{const ids=new Set(state.surtidos.filter(s=>s.status==='Finalizado').map(s=>s.id));state.surtidos=state.surtidos.filter(s=>!ids.has(s.id));if(ids.has(state.activeSurtidoId))state.activeSurtidoId='';save();toast('Surtidos finalizados borrados')})}
+let modalCallback=null;function confirmAction(title,text,cb){modalCallback=cb;$('modalTitle').textContent=title;$('modalText').textContent=text;$('confirmModal').classList.remove('hidden')}function closeModal(){modalCallback=null;$('confirmModal').classList.add('hidden')}
+function render(){if(!state.profile)return;const s=activeSurtido();$('topUser').textContent=`${state.profile.name} · ${deviceId()}`;$('homeDevice').textContent=deviceId();$('homeInProgress').textContent=state.surtidos.filter(x=>x.status==='En proceso').length;$('homeFinished').textContent=state.surtidos.filter(x=>x.status==='Finalizado').length;renderSurtidos();renderCapture();renderTransfer();renderSettings()}
+function renderSurtidos(){const c=$('surtidoList');if(!state.surtidos.length){c.innerHTML='<div class="empty">Aún no hay surtidos guardados en este celular.</div>';return}c.innerHTML=state.surtidos.map(s=>{const t=sums(movementsOf(s));const badge=s.status==='Finalizado'?'badge':'badge warn';return `<article class="item"><div class="item-top"><div><strong>${esc(s.folio)}</strong><p>${esc(s.destination||'Sin destino')} · ${esc(s.reference||'Sin referencia')}<br>${s.teamKey?`Equipo: ${esc(s.teamKey)} · `:''}${palletsOf(s).length} tarima(s) · ${fmt(t.kg)} KG</p></div><span class="${badge}">${esc(s.status)}</span></div><div class="actions mt8"><button class="btn primary small" data-open-surtido="${esc(s.id)}">${s.status==='Finalizado'?'Ver':'Continuar'}</button><button class="btn ghost small" data-export-surtido="${esc(s.id)}">Exportar</button></div></article>`}).join('');c.querySelectorAll('[data-open-surtido]').forEach(b=>b.onclick=()=>openSurtido(b.dataset.openSurtido));c.querySelectorAll('[data-export-surtido]').forEach(b=>b.onclick=()=>{state.activeSurtidoId=b.dataset.exportSurtido;save();exportPackage('active')})}
+function renderCapture(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)state.currentPallet=Number(open.number);const current=palletsOf(s).find(p=>Number(p.number)===Number(state.currentPallet))||palletsOf(s).at(-1);if(current)state.currentPallet=Number(current.number);const all=sums(movementsOf(s));const pm=sums(palletMoves(s,state.currentPallet));$('activeFolio').textContent=s.folio;$('activeMeta').textContent=`${s.teamKey?`Equipo ${s.teamKey} · `:''}${s.destination||'Sin destino'} · ${s.reference||'Sin referencia'}`;$('activeStatus').textContent=s.status;$('activeStatus').className=s.status==='Finalizado'?'badge':'badge warn';$('currentPalletLabel').textContent=state.currentPallet;$('surtidoKgBanner').textContent=`${fmt(all.kg)} KG`;$('palletQty').textContent=fmt(pm.quantity,0);$('palletKg').textContent=fmt(pm.kg);$('palletMill').textContent=fmt(pm.mill,3);const closed=!open||s.status==='Finalizado';$('captureClosedNotice').classList.toggle('hidden',!closed||s.status==='Finalizado');$('captureFormCard').classList.toggle('hidden',closed||s.status==='Finalizado');$('closePalletBtn').classList.toggle('hidden',closed||s.status==='Finalizado');$('newPalletBtn').classList.toggle('hidden',s.status==='Finalizado');$('finalizeBtn').classList.toggle('hidden',s.status==='Finalizado');renderMovements(s,state.currentPallet);updateCaptureFields()}
+function renderMovements(s,pallet){const c=$('movementList');const ms=palletMoves(s,pallet).slice().sort((a,b)=>String(b.capturedAt).localeCompare(String(a.capturedAt)));if(!ms.length){c.innerHTML='<div class="empty">Todavía no hay capturas en esta tarima.</div>';return}c.innerHTML=ms.map((m,i)=>`<article class="item recent-row"><div class="recent-num">${i+1}</div><div><strong>${esc(m.code)} · ${fmt(m.weight)} KG</strong><p>${esc(m.product)}<br>${esc(m.lot)} · Cant. ${fmt(m.quantity,0)}${num(m.mill)?` · ${fmt(m.mill,3)} MILL`:''}</p></div>${s.status==='En proceso'&&openPallet(s)&&Number(openPallet(s).number)===Number(pallet)?`<button class="danger-link" data-del-move="${esc(m.id)}">Quitar</button>`:''}</article>`).join('');c.querySelectorAll('[data-del-move]').forEach(b=>b.onclick=()=>deleteMovement(b.dataset.delMove))}
+function renderTransfer(){const c=$('packageHistory'),a=packageHistory();if(!a.length){c.innerHTML='<div class="empty">Todavía no has generado paquetes desde este celular.</div>';return}c.innerHTML=a.map(x=>`<article class="item"><div class="item-top"><div><strong>${esc(x.filename)}</strong><p>${dateTime(x.createdAt)} · ${x.count||1} surtido(s)</p></div><span class="badge blue">${esc(x.packageId||'PKG')}</span></div></article>`).join('')}
+function renderSettings(){$('settingsUsername').value=state.profile.username||'';$('settingsName').value=state.profile.name||'';$('settingsRole').value=state.profile.role||'Operador';$('settingsDeviceLabel').value=state.profile.deviceLabel||'';$('settingsDeviceId').textContent=deviceId();renderMobileDbInfo()}
+function initDatalist(){$('productCodes').innerHTML=PRODUCTS.map(p=>`<option value="${esc(p.code)}">${esc(p.description)}</option>`).join('')}
+function bind(){
+ $('finishSetupBtn').onclick=finishSetup;$('createSurtidoBtn').onclick=createSurtido;$('backHomeBtn').onclick=()=>setScreen('home');$('matCode').addEventListener('change',updateProduct);$('matCode').addEventListener('input',()=>{const p=productByCode($('matCode').value);if(p)updateProduct()});$('matType').onchange=updateCaptureFields;document.querySelectorAll('input[name="rollMode"]').forEach(r=>r.onchange=updateCaptureFields);$('addMovementBtn').onclick=addMovement;$('closePalletBtn').onclick=closePallet;$('newPalletBtn').onclick=newPallet;$('finalizeBtn').onclick=finalize;$('exportCurrentBtn').onclick=()=>exportPackage('active');$('exportAllBtn').onclick=()=>exportPackage('all');$('transferExportAllBtn').onclick=()=>exportPackage('all');$('transferExportActiveBtn').onclick=()=>exportPackage('active');$('saveSettingsBtn').onclick=saveSettings;$('importMobileDbBtn').onclick=()=>$('mobileDbFile').click();$('mobileDbFile').onchange=e=>{importMobileDbFile(e.target.files?.[0]);e.target.value=''};$('restoreMobileDbBtn').onclick=restorePreviousMobileDb;$('backupBtn').onclick=exportBackup;$('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=e=>restoreBackup(e.target.files?.[0]);$('clearFinishedBtn').onclick=clearFinished;document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));$('modalCancel').onclick=closeModal;$('modalConfirm').onclick=()=>{const cb=modalCallback;closeModal();cb?.()};
+}
+initDatalist();bind();renderMobileDbInfo();setupCheck();
+</script>
+
+<script>
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+
+      // When a newer worker is waiting, activate it without touching local data.
+      if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+      reg.addEventListener('updatefound', () => {
+        const worker = reg.installing;
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+            worker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+    } catch (err) {
+      console.warn('LYNOR: no se pudo registrar el modo offline', err);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
