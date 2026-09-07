@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lynor-mobile-v3.3.0';
+const CACHE_NAME = 'lynor-mobile-v3.3.1';
 const APP_SHELL = [
   './',
   './index.html',
