@@ -50,7 +50,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
   <div class="appbar-row">
     <div class="brandmark">L</div>
     <div class="brandcopy"><strong>LYNOR Móvil</strong><small id="topUser">—</small></div>
-    <span class="status-pill">APP · OFFLINE</span>
+    <span class="status-pill">APP V3.2.8 · OFFLINE</span>
   </div>
 </header>
 
@@ -68,6 +68,18 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
     </div>
     <div class="card">
       <div class="section-title"><div><span class="eyebrow">NUEVO</span><h3>Crear surtido</h3><p>Si trabajan varios celulares en el mismo surtido, usen exactamente el mismo Código de equipo.</p></div></div>
+     <label class="field">
+  <span>Nombre del surtido</span>
+  <input
+    id="newSurtidoName"
+    maxlength="120"
+    placeholder="Ej. GONAC turno noche"
+  >
+  <small class="subtle">
+    La fecha se mostrará automáticamente en día/mes/año.
+  </small>
+</label>
+     
       <label class="field"><span>Destino / área</span><input id="newDestination" placeholder="Ej. Almacén PT"></label>
       <label class="field"><span>Referencia</span><input id="newReference" placeholder="Pedido, ruta o referencia opcional"></label>
       <div class="grid2">
@@ -95,7 +107,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
     </div>
     <div id="captureClosedNotice" class="card hidden">
       <div class="note green">La tarima actual está cerrada. Puedes crear la siguiente tarima o finalizar el surtido si ya terminaste.</div>
-      <div class="actions mt12"><button id="newPalletBtn" class="btn primary">+ Crear siguiente tarima</button><button id="finalizeBtn" class="btn green">Finalizar surtido</button></div>
+      <div class="actions mt12"><button id="newPalletBtn" class="btn primary">+ Elegir número de nueva tarima</button><button id="finalizeBtn" class="btn green">Finalizar surtido</button></div>
     </div>
     <div id="captureFormCard" class="card">
       <div class="section-title"><div><span class="eyebrow">CAPTURA MANUAL</span><h3>Agregar material</h3></div></div>
@@ -127,6 +139,24 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
       <div class="kpi"><span>KG TARIMA</span><strong id="palletKg">0.00</strong></div>
       <div class="kpi"><span>MILL TARIMA</span><strong id="palletMill">0.000</strong></div>
     </div>
+    <div class="card">
+  <div class="section-title">
+    <div>
+      <span class="eyebrow">AVANCE POR PRODUCTO</span>
+      <h3>Resumen por clave</h3>
+    </div>
+  </div>
+
+  <label class="field">
+    <span>Mostrar cantidades de</span>
+    <select id="productSummaryScope">
+      <option value="pallet">Tarima actual</option>
+      <option value="all">Todo el surtido</option>
+    </select>
+  </label>
+
+  <div id="productSummaryList" class="list"></div>
+</div>
     <div class="card">
       <div class="section-title"><div><span class="eyebrow">TARIMA ACTUAL</span><h3>Capturas recientes</h3></div><button id="closePalletBtn" class="btn dark small">Cerrar tarima</button></div>
       <div id="movementList" class="list"></div>
@@ -329,11 +359,87 @@ function productUsesDate(p){if(!p)return false;const parts=String(p.code||'').sp
 function shiftLabel(){const h=new Date().getHours();return(h>=19||h<9)?'Turno nocturno':'Turno matutino'}
 function localFolio(){const d=new Date();const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0'),hh=String(d.getHours()).padStart(2,'0'),mm=String(d.getMinutes()).padStart(2,'0');return `SUR-OFF-${y}${m}${day}-${hh}${mm}-${token(2)}`}
 function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function dateTime(v){if(!v)return'—';try{return new Date(v).toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'})}catch{return String(v)}}
+function mobileDate(v) {
+  if (!v) return "—";
+
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "—";
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+function dateTime(v) {
+  if (!v) return "—";
+
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "—";
+
+  const hour = String(d.getHours()).padStart(2, "0");
+  const minute = String(d.getMinutes()).padStart(2, "0");
+
+  return `${mobileDate(v)} · ${hour}:${minute}`;
+}
+
+function mobileSurtidoTitle(s) {
+  const name = String(s?.displayName || "").trim() || "Surtido";
+  return `${name} · ${mobileDate(s?.createdAt)}`;
+}
 function setScreen(name){document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===`screen-${name}`));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));if(name==='capture'&&!activeSurtido()){name='home';document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id==='screen-home'));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.screen==='home'))}render()}
 function setupCheck(){const ok=state.profile?.username&&state.profile?.name;$('setupScreen').classList.toggle('hidden',!!ok);$('appShell').classList.toggle('hidden',!ok);if(ok)render()}
 function finishSetup(){const username=$('setupUsername').value.trim(),name=$('setupName').value.trim();if(!username||!name)return toast('Captura usuario y nombre');state.profile={username,name,role:$('setupRole').value||'Operador',deviceLabel:$('setupDeviceLabel').value.trim()||'Celular'};save();setupCheck();toast('LYNOR Móvil listo')}
-function createSurtido(){const start=Math.max(1,Math.floor(num($('newStartPallet').value)||1));const team=norm($('newTeamKey').value);const created=now();const s={id:uid('OFFSUR'),folio:localFolio(),destination:$('newDestination').value.trim(),reference:$('newReference').value.trim(),teamKey:team,shift:shiftLabel(),status:'En proceso',createdAt:created,createdBy:state.profile.name,createdByUser:state.profile.username,createdDeviceId:deviceId(),offlineCreated:true,pallets:[{number:start,status:'Abierta',createdAt:created,createdBy:state.profile.name,deviceId:deviceId()}],movements:[]};state.surtidos.unshift(s);state.activeSurtidoId=s.id;state.currentPallet=start;$('newDestination').value='';$('newReference').value='';$('newTeamKey').value='';$('newStartPallet').value='1';save();setScreen('capture');toast(`Surtido creado · Tarima ${start}`)}
+function createSurtido() {
+  const start = Number($("newStartPallet").value);
+
+  if (!Number.isSafeInteger(start) || start < 1) {
+    return toast("Escribe un número válido de tarima inicial");
+  }
+
+  const displayName = $("newSurtidoName").value.trim().slice(0, 120);
+  const team = norm($("newTeamKey").value);
+  const created = now();
+
+  const s = {
+    id: uid("OFFSUR"),
+    folio: localFolio(),
+    displayName,
+    destination: $("newDestination").value.trim(),
+    reference: $("newReference").value.trim(),
+    teamKey: team,
+    shift: shiftLabel(),
+    status: "En proceso",
+    createdAt: created,
+    createdBy: state.profile.name,
+    createdByUser: state.profile.username,
+    createdDeviceId: deviceId(),
+    offlineCreated: true,
+    pallets: [{
+      number: start,
+      status: "Abierta",
+      createdAt: created,
+      createdBy: state.profile.name,
+      deviceId: deviceId()
+    }],
+    movements: []
+  };
+
+  state.surtidos.unshift(s);
+  state.activeSurtidoId = s.id;
+  state.currentPallet = start;
+
+  $("newSurtidoName").value = "";
+  $("newDestination").value = "";
+  $("newReference").value = "";
+  $("newTeamKey").value = "";
+  $("newStartPallet").value = "1";
+
+  save();
+  setScreen("capture");
+  toast(`Surtido creado · Tarima ${start}`);
+}
 function openSurtido(id){const s=state.surtidos.find(x=>x.id===id);if(!s)return;state.activeSurtidoId=id;const open=openPallet(s);state.currentPallet=open?.number||Math.max(1,...palletsOf(s).map(p=>Number(p.number)||1));save();setScreen('capture')}
 function updateProduct(){const code=$('matCode').value;const p=productByCode(code);if(p){$('matDescription').value=p.description||'';$('matClient').value=p.client||'';$('matType').value=['RLL','PQ','CJ','CJA'].includes(norm(p.type))?norm(p.type):'OTRO';$('productDescPreview').textContent=p.description||p.code;$('productClientPreview').textContent=`${p.client||'Sin cliente'} · ${p.type||''}`;$('productInfo').classList.remove('hidden')}else{$('productInfo').classList.add('hidden')}updateCaptureFields()}
 function currentProduct(){return{code:norm($('matCode').value),description:$('matDescription').value.trim(),client:$('matClient').value.trim(),type:norm($('matType').value)}}
@@ -341,7 +447,55 @@ function updateCaptureFields(){const p=currentProduct();const isRoll=p.type==='R
 function addMovement(){const s=activeSurtido();if(!s||s.status!=='En proceso')return toast('No hay surtido abierto');const pal=openPallet(s);if(!pal)return toast('Primero crea una tarima abierta');const p=currentProduct();if(!p.code)return toast('Captura la clave');if(!p.description)return toast('Captura la descripción');const lot=$('matLot').value.trim();if(!lot)return toast('Captura la O.T. / lote');const date=$('matDate').value||'';if(productUsesDate(p)&&!date)return toast('Este material requiere fecha');const isRoll=p.type==='RLL';const captureMode=isRoll?(document.querySelector('input[name="rollMode"]:checked')?.value==='total'?'total':'individual'):'total';const quantity=isRoll&&captureMode==='individual'?1:num($('matQuantity').value);const weight=num($('matWeight').value);const mill=isRoll?0:num($('matMill').value);if(quantity<=0)return toast('Captura una cantidad válida');if(weight<=0)return toast(isRoll&&captureMode==='individual'?'Captura el peso del rollo':'Captura el peso total');const m={id:uid('MOV'),pallet:Number(pal.number),code:p.code,product:p.description,client:p.client,productType:p.type,lot,materialDate:date,quantity,weight,mill,captureMode,notes:$('matNotes').value.trim(),source:'Manual',capturedAt:now(),operator:state.profile.name||state.profile.username,operatorUsername:state.profile.username,deviceId:deviceId(),confirmedAt:now(),confirmedBy:state.profile.name,deleted:false};s.movements.push(m);state.currentPallet=pal.number;const keepCode=p.code,keepDesc=p.description,keepClient=p.client,keepType=p.type,keepLot=lot;$('matWeight').value='';$('matMill').value='';$('matNotes').value='';if(captureMode!=='individual')$('matQuantity').value='';$('matCode').value=keepCode;$('matDescription').value=keepDesc;$('matClient').value=keepClient;$('matType').value=keepType;$('matLot').value=keepLot;save();setTimeout(()=>$('matWeight').focus(),50);toast('Material agregado')}
 function deleteMovement(id){const s=activeSurtido();const m=s?.movements.find(x=>x.id===id);if(!m)return;confirmAction('Quitar captura',`${m.code} · ${fmt(m.weight)} KG`,()=>{m.deleted=true;m.deletedAt=now();m.deletedBy=state.profile.name;save();toast('Captura retirada')})}
 function closePallet(){const s=activeSurtido(),pal=openPallet(s);if(!s||!pal)return toast('No hay tarima abierta');const count=palletMoves(s,pal.number).length;confirmAction(`Cerrar Tarima ${pal.number}`,count?`Tiene ${count} captura(s). Después ya no podrás agregar material a esta tarima.`:'Esta tarima está vacía. ¿Cerrar de todos modos?',()=>{pal.status='Cerrada';pal.closedAt=now();pal.closedBy=state.profile.name;save();toast(`Tarima ${pal.number} cerrada`)})}
-function newPallet(){const s=activeSurtido();if(!s||s.status!=='En proceso')return;const open=openPallet(s);if(open)return toast(`Primero cierra Tarima ${open.number}`);const n=Math.max(0,...palletsOf(s).map(p=>Number(p.number)||0))+1;s.pallets.push({number:n,status:'Abierta',createdAt:now(),createdBy:state.profile.name,deviceId:deviceId()});state.currentPallet=n;save();toast(`Tarima ${n} abierta`)}
+function newPallet() {
+  const s = activeSurtido();
+
+  if (!s || s.status !== "En proceso") {
+    return toast("No hay un surtido abierto");
+  }
+
+  const open = openPallet(s);
+  if (open) {
+    return toast(`Primero cierra la Tarima ${open.number}`);
+  }
+
+  const proposed = Math.max(
+    0,
+    ...palletsOf(s).map(p => Number(p.number) || 0)
+  ) + 1;
+
+  const answer = window.prompt(
+    "¿Qué número tendrá la nueva tarima?\nPuedes crear la 2 y después la 7, o la 5 y después la 3.",
+    String(proposed)
+  );
+
+  if (answer === null) return;
+
+  const number = Number(answer.trim());
+
+  if (!Number.isSafeInteger(number) || number < 1) {
+    return toast("Escribe un número entero mayor que cero");
+  }
+
+  if (palletsOf(s).some(p => Number(p.number) === number)) {
+    return toast(`La Tarima ${number} ya existe en este surtido`);
+  }
+
+  s.pallets = s.pallets || [];
+
+  s.pallets.push({
+    number,
+    status: "Abierta",
+    createdAt: now(),
+    createdBy: state.profile.name,
+    deviceId: deviceId()
+  });
+
+  state.currentPallet = number;
+  save();
+
+  toast(`Tarima ${number} abierta`);
+}
 function finalize(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)return toast(`Primero cierra Tarima ${open.number}`);if(!movementsOf(s).length)return toast('El surtido no tiene capturas');confirmAction('Finalizar surtido','Se marcará como finalizado y quedará listo para exportar a la PC.',()=>{s.status='Finalizado';s.finalizedAt=now();s.finalizedBy=state.profile.name;s.finalKg=sums(movementsOf(s)).kg;save();toast('Surtido finalizado')})}
 function packageHistory(){try{const a=JSON.parse(localStorage.getItem(PACKAGE_HISTORY_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return[]}}
 function savePackageHistory(rec){const a=packageHistory();a.unshift(rec);try{localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(a.slice(0,30)))}catch{}render()}
@@ -355,13 +509,103 @@ function saveSettings(){const u=$('settingsUsername').value.trim(),n=$('settings
 function clearFinished(){const count=state.surtidos.filter(s=>s.status==='Finalizado').length;if(!count)return toast('No hay surtidos finalizados');confirmAction('Borrar surtidos finalizados',`Se eliminarán ${count} surtido(s) de este celular. Haz un respaldo antes si quieres conservarlos.`,()=>{const ids=new Set(state.surtidos.filter(s=>s.status==='Finalizado').map(s=>s.id));state.surtidos=state.surtidos.filter(s=>!ids.has(s.id));if(ids.has(state.activeSurtidoId))state.activeSurtidoId='';save();toast('Surtidos finalizados borrados')})}
 let modalCallback=null;function confirmAction(title,text,cb){modalCallback=cb;$('modalTitle').textContent=title;$('modalText').textContent=text;$('confirmModal').classList.remove('hidden')}function closeModal(){modalCallback=null;$('confirmModal').classList.add('hidden')}
 function render(){if(!state.profile)return;const s=activeSurtido();$('topUser').textContent=`${state.profile.name} · ${deviceId()}`;$('homeDevice').textContent=deviceId();$('homeInProgress').textContent=state.surtidos.filter(x=>x.status==='En proceso').length;$('homeFinished').textContent=state.surtidos.filter(x=>x.status==='Finalizado').length;renderSurtidos();renderCapture();renderTransfer();renderSettings()}
-function renderSurtidos(){const c=$('surtidoList');if(!state.surtidos.length){c.innerHTML='<div class="empty">Aún no hay surtidos guardados en este celular.</div>';return}c.innerHTML=state.surtidos.map(s=>{const t=sums(movementsOf(s));const badge=s.status==='Finalizado'?'badge':'badge warn';return `<article class="item"><div class="item-top"><div><strong>${esc(s.folio)}</strong><p>${esc(s.destination||'Sin destino')} · ${esc(s.reference||'Sin referencia')}<br>${s.teamKey?`Equipo: ${esc(s.teamKey)} · `:''}${palletsOf(s).length} tarima(s) · ${fmt(t.kg)} KG</p></div><span class="${badge}">${esc(s.status)}</span></div><div class="actions mt8"><button class="btn primary small" data-open-surtido="${esc(s.id)}">${s.status==='Finalizado'?'Ver':'Continuar'}</button><button class="btn ghost small" data-export-surtido="${esc(s.id)}">Exportar</button></div></article>`}).join('');c.querySelectorAll('[data-open-surtido]').forEach(b=>b.onclick=()=>openSurtido(b.dataset.openSurtido));c.querySelectorAll('[data-export-surtido]').forEach(b=>b.onclick=()=>{state.activeSurtidoId=b.dataset.exportSurtido;save();exportPackage('active')})}
-function renderCapture(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)state.currentPallet=Number(open.number);const current=palletsOf(s).find(p=>Number(p.number)===Number(state.currentPallet))||palletsOf(s).at(-1);if(current)state.currentPallet=Number(current.number);const all=sums(movementsOf(s));const pm=sums(palletMoves(s,state.currentPallet));$('activeFolio').textContent=s.folio;$('activeMeta').textContent=`${s.teamKey?`Equipo ${s.teamKey} · `:''}${s.destination||'Sin destino'} · ${s.reference||'Sin referencia'}`;$('activeStatus').textContent=s.status;$('activeStatus').className=s.status==='Finalizado'?'badge':'badge warn';$('currentPalletLabel').textContent=state.currentPallet;$('surtidoKgBanner').textContent=`${fmt(all.kg)} KG`;$('palletQty').textContent=fmt(pm.quantity,0);$('palletKg').textContent=fmt(pm.kg);$('palletMill').textContent=fmt(pm.mill,3);const closed=!open||s.status==='Finalizado';$('captureClosedNotice').classList.toggle('hidden',!closed||s.status==='Finalizado');$('captureFormCard').classList.toggle('hidden',closed||s.status==='Finalizado');$('closePalletBtn').classList.toggle('hidden',closed||s.status==='Finalizado');$('newPalletBtn').classList.toggle('hidden',s.status==='Finalizado');$('finalizeBtn').classList.toggle('hidden',s.status==='Finalizado');renderMovements(s,state.currentPallet);updateCaptureFields()}
+function renderSurtidos(){const c=$('surtidoList');if(!state.surtidos.length){c.innerHTML='<div class="empty">Aún no hay surtidos guardados en este celular.</div>';return}c.innerHTML=state.surtidos.map(s=>{const t=sums(movementsOf(s));const badge=s.status==='Finalizado'?'badge':'badge warn';return `<article class="item"><div class="item-top"><div><strong>${esc(mobileSurtidoTitle(s))}</strong><p>${esc(s.destination||'Sin destino')} · ${esc(s.reference||'Sin referencia')}<br>${s.teamKey?`Equipo: ${esc(s.teamKey)} · `:''}${palletsOf(s).length} tarima(s) · ${fmt(t.kg)} KG</p></div><span class="${badge}">${esc(s.status)}</span></div><div class="actions mt8"><button class="btn primary small" data-open-surtido="${esc(s.id)}">${s.status==='Finalizado'?'Ver':'Continuar'}</button><button class="btn ghost small" data-export-surtido="${esc(s.id)}">Exportar</button></div></article>`}).join('');c.querySelectorAll('[data-open-surtido]').forEach(b=>b.onclick=()=>openSurtido(b.dataset.openSurtido));c.querySelectorAll('[data-export-surtido]').forEach(b=>b.onclick=()=>{state.activeSurtidoId=b.dataset.exportSurtido;save();exportPackage('active')})}
+ function mobileProductGroups(ms) {
+  const groups = new Map();
+
+  for (const m of ms.filter(m => !m.deleted)) {
+    const code = norm(m.code);
+
+    if (!groups.has(code)) {
+      groups.set(code, {
+        code,
+        product: m.product || "",
+        units: {},
+        kg: 0,
+        mill: 0
+      });
+    }
+
+    const group = groups.get(code);
+    const type = norm(m.productType);
+
+    const unit =
+      type === "RLL" ? "rollos" :
+      type === "PQ" ? "paquetes" :
+      ["CJ", "CJA"].includes(type) ? "cajas" :
+      "unidades";
+
+    group.units[unit] =
+      (group.units[unit] || 0) + num(m.quantity ?? 1);
+
+    group.kg += num(m.weight);
+    group.mill += num(m.mill);
+  }
+
+  return [...groups.values()];
+}
+
+function mobileUnitsText(units) {
+  const labels = {
+    rollos: ["rollo", "rollos"],
+    paquetes: ["paquete", "paquetes"],
+    cajas: ["caja", "cajas"],
+    unidades: ["unidad", "unidades"]
+  };
+
+  return Object.entries(units).map(([unit, quantity]) => {
+    const label = labels[unit] || ["unidad", "unidades"];
+    return `${quantity} ${quantity === 1 ? label[0] : label[1]}`;
+  }).join(" · ");
+}
+
+function renderProductSummary() {
+  const container = $("productSummaryList");
+  const s = activeSurtido();
+
+  if (!container) return;
+
+  if (!s) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const scope = $("productSummaryScope").value;
+
+  const moves = scope === "all"
+    ? movementsOf(s)
+    : palletMoves(s, state.currentPallet);
+
+  const groups = mobileProductGroups(moves);
+
+  if (!groups.length) {
+    container.innerHTML =
+      '<div class="empty">Todavía no hay material en esta selección.</div>';
+    return;
+  }
+
+  container.innerHTML = groups.map(group => `
+    <article class="item">
+      <div>
+        <strong>${esc(group.code)}</strong>
+        <p>${esc(group.product)}</p>
+
+        <p>
+          <b>${esc(mobileUnitsText(group.units))}</b>
+          · <b>${fmt(group.kg)} KG</b>
+          ${group.mill ? ` · <b>${fmt(group.mill, 3)} millares</b>` : ""}
+        </p>
+      </div>
+    </article>
+  `).join("");
+}
+function renderCapture(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)state.currentPallet=Number(open.number);const current=palletsOf(s).find(p=>Number(p.number)===Number(state.currentPallet))||palletsOf(s).at(-1);if(current)state.currentPallet=Number(current.number);const all=sums(movementsOf(s));const pm=sums(palletMoves(s,state.currentPallet));$('activeFolio').textContent=mobileSurtidoTitle(s);$('activeMeta').textContent=`${s.teamKey?`Equipo ${s.teamKey} · `:''}${s.destination||'Sin destino'} · ${s.reference||'Sin referencia'}`;$('activeStatus').textContent=s.status;$('activeStatus').className=s.status==='Finalizado'?'badge':'badge warn';$('currentPalletLabel').textContent=state.currentPallet;$('surtidoKgBanner').textContent=`${fmt(all.kg)} KG`;$('palletQty').textContent=fmt(pm.quantity,0);$('palletKg').textContent=fmt(pm.kg);$('palletMill').textContent=fmt(pm.mill,3);const closed=!open||s.status==='Finalizado';$('captureClosedNotice').classList.toggle('hidden',!closed||s.status==='Finalizado');$('captureFormCard').classList.toggle('hidden',closed||s.status==='Finalizado');$('closePalletBtn').classList.toggle('hidden',closed||s.status==='Finalizado');$('newPalletBtn').classList.toggle('hidden',s.status==='Finalizado');$('finalizeBtn').classList.toggle('hidden',s.status==='Finalizado');renderProductSummary();renderMovements(s,state.currentPallet);updateCaptureFields()}
 function renderMovements(s,pallet){const c=$('movementList');const ms=palletMoves(s,pallet).slice().sort((a,b)=>String(b.capturedAt).localeCompare(String(a.capturedAt)));if(!ms.length){c.innerHTML='<div class="empty">Todavía no hay capturas en esta tarima.</div>';return}c.innerHTML=ms.map((m,i)=>`<article class="item recent-row"><div class="recent-num">${i+1}</div><div><strong>${esc(m.code)} · ${fmt(m.weight)} KG</strong><p>${esc(m.product)}<br>${esc(m.lot)} · Cant. ${fmt(m.quantity,0)}${num(m.mill)?` · ${fmt(m.mill,3)} MILL`:''}</p></div>${s.status==='En proceso'&&openPallet(s)&&Number(openPallet(s).number)===Number(pallet)?`<button class="danger-link" data-del-move="${esc(m.id)}">Quitar</button>`:''}</article>`).join('');c.querySelectorAll('[data-del-move]').forEach(b=>b.onclick=()=>deleteMovement(b.dataset.delMove))}
 function renderTransfer(){const c=$('packageHistory'),a=packageHistory();if(!a.length){c.innerHTML='<div class="empty">Todavía no has generado paquetes desde este celular.</div>';return}c.innerHTML=a.map(x=>`<article class="item"><div class="item-top"><div><strong>${esc(x.filename)}</strong><p>${dateTime(x.createdAt)} · ${x.count||1} surtido(s)</p></div><span class="badge blue">${esc(x.packageId||'PKG')}</span></div></article>`).join('')}
 function renderSettings(){$('settingsUsername').value=state.profile.username||'';$('settingsName').value=state.profile.name||'';$('settingsRole').value=state.profile.role||'Operador';$('settingsDeviceLabel').value=state.profile.deviceLabel||'';$('settingsDeviceId').textContent=deviceId();renderMobileDbInfo()}
 function initDatalist(){$('productCodes').innerHTML=PRODUCTS.map(p=>`<option value="${esc(p.code)}">${esc(p.description)}</option>`).join('')}
 function bind(){
+  $("productSummaryScope").onchange = renderProductSummary;
  $('finishSetupBtn').onclick=finishSetup;$('createSurtidoBtn').onclick=createSurtido;$('backHomeBtn').onclick=()=>setScreen('home');$('matCode').addEventListener('change',updateProduct);$('matCode').addEventListener('input',()=>{const p=productByCode($('matCode').value);if(p)updateProduct()});$('matType').onchange=updateCaptureFields;document.querySelectorAll('input[name="rollMode"]').forEach(r=>r.onchange=updateCaptureFields);$('addMovementBtn').onclick=addMovement;$('closePalletBtn').onclick=closePallet;$('newPalletBtn').onclick=newPallet;$('finalizeBtn').onclick=finalize;$('exportCurrentBtn').onclick=()=>exportPackage('active');$('exportAllBtn').onclick=()=>exportPackage('all');$('transferExportAllBtn').onclick=()=>exportPackage('all');$('transferExportActiveBtn').onclick=()=>exportPackage('active');$('saveSettingsBtn').onclick=saveSettings;$('importMobileDbBtn').onclick=()=>$('mobileDbFile').click();$('mobileDbFile').onchange=e=>{importMobileDbFile(e.target.files?.[0]);e.target.value=''};$('restoreMobileDbBtn').onclick=restorePreviousMobileDb;$('backupBtn').onclick=exportBackup;$('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=e=>restoreBackup(e.target.files?.[0]);$('clearFinishedBtn').onclick=clearFinished;document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));$('modalCancel').onclick=closeModal;$('modalConfirm').onclick=()=>{const cb=modalCallback;closeModal();cb?.()};
 }
 initDatalist();bind();renderMobileDbInfo();setupCheck();
