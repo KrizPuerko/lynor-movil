@@ -84,7 +84,12 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
       <label class="field"><span>Referencia</span><input id="newReference" placeholder="Pedido, ruta o referencia opcional"></label>
       <div class="grid2">
         <label class="field"><span>Código de equipo</span><input id="newTeamKey" autocapitalize="characters" placeholder="Ej. EQUIPO-0409-A"></label>
-        <label class="field"><span>Tarima inicial *</span><input id="newStartPallet" type="number" min="1" value="1" inputmode="numeric"></label>
+       <input id="newStartPallet" type="hidden" value="1">
+
+        <p class="note">
+          Comenzarás con la Tarima provisional A.
+          Asigna los números finales cuando terminen de surtir.
+        </p> 
       </div>
       <div class="note warn">Ejemplo: tú empiezas en Tarima 1 y tu compañero en Tarima 6. Ambos ponen el mismo Código de equipo. Al importar, LYNOR PC fusiona las tarimas.</div>
       <button id="createSurtidoBtn" class="btn primary block mt12">+ Crear surtido y abrir tarima</button>
@@ -105,9 +110,24 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
       <div><span>TARIMA ACTUAL</span><strong id="currentPalletLabel">1</strong></div>
       <div class="right"><span>TOTAL SURTIDO</span><strong id="surtidoKgBanner">0.00 KG</strong></div>
     </div>
+    <div class="card">
+  <button
+    id="assignFinalNumbersBtn"
+    class="btn primary"
+    type="button"
+  >
+    Asignar números finales
+  </button>
+
+  <p class="note">
+    Primero cierra tus tarimas.
+    Después puedes asignarles los números que les correspondan,
+    incluso si ya finalizaste el surtido.
+  </p>
+</div>
     <div id="captureClosedNotice" class="card hidden">
       <div class="note green">La tarima actual está cerrada. Puedes crear la siguiente tarima o finalizar el surtido si ya terminaste.</div>
-      <div class="actions mt12"><button id="newPalletBtn" class="btn primary">+ Elegir número de nueva tarima</button><button id="finalizeBtn" class="btn green">Finalizar surtido</button></div>
+      <div class="actions mt12"><button id="newPalletBtn" class="btn primary">+ Crear siguiente tarima provisional</button><button id="finalizeBtn" class="btn green">Finalizar surtido</button></div>
     </div>
     <div id="captureFormCard" class="card">
       <div class="section-title"><div><span class="eyebrow">CAPTURA MANUAL</span><h3>Agregar material</h3></div></div>
@@ -227,6 +247,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
 <div id="confirmModal" class="modal hidden"><div class="modal-card"><span class="eyebrow">CONFIRMAR</span><h3 id="modalTitle" style="margin:0 0 8px"></h3><p id="modalText" class="subtle" style="font-size:12px"></p><div class="actions mt12"><button id="modalCancel" class="btn ghost">Cancelar</button><button id="modalConfirm" class="btn dark">Confirmar</button></div></div></div>
 <div id="toast" class="toast"></div>
 
+<script src="./numeracion-tarimas.js?v=3.3.0"></script>
 <script>
 const EMBEDDED_PRODUCTS = [{"client":"DART","code":"2-1213-01","description":"ROLLO 32J32 RLO","type":"RLL"},{"client":"DART","code":"2-1213-10","description":"ROLLO 8J8","type":"RLL"},{"client":"DART","code":"2-1213-25","description":"ROLLO 32SLMX PRUEBALO","type":"RLL"},{"client":"GONAC","code":"2-1435-554","description":"BOB CHECHOS QUESO CHEDDAR DE 3 KG","type":"RLL"},{"client":"GONAC","code":"2-1435-556","description":"CHECHOS CHILE DE 3 KG","type":"RLL"},{"client":"GONAC","code":"2-1435-562","description":"TORTILLIN ADOBO DE 12 G","type":"RLL"},{"client":"GONAC","code":"2-1435-575","description":"CHARRON HOT CHILI DE 9 G","type":"RLL"},{"client":"GONAC","code":"2-1435-588","description":"FRANCESA SALSA NEGRA DE 9 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-589","description":"FRANCESA HOT CHILI DE 9 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-608","description":"PALITOS HOT CHILI DE 8GR","type":"RLL"},{"client":"GONAC","code":"2-1435-609","description":"DONITAS SAL Y LIMON DE 6 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-612","description":"PALITOS CHILE Y LIMON DE 8 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-613","description":"DONITAS CHILE Y LIMON DE 6G","type":"RLL"},{"client":"GONAC","code":"2-1435-618","description":"DONITAS HOT CHILI DE 6 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-635","description":"DONITAS HOT CHILI DE 12 GR","type":"RLL"},{"client":"GONAC","code":"2-1435-637","description":"CHARRON HOT CHILI DE 15 G","type":"RLL"},{"client":"GONAC","code":"2-1435-638","description":"PELICULA UVA TORNILLO HOT CHILI DE 14 G","type":"RLL"},{"client":"GONAC","code":"2-1435-639","description":"BOLSA KIKYS AHUMADO DE 16 GRS","type":"PQ"},{"client":"GONAC","code":"2-1435-641","description":"PALITOS HOT CHILI DE 16 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-642","description":"FRANCESAS SAL NEG 14G","type":"RLL"},{"client":"GONAC","code":"2-1435-643","description":"FRANCESAS HOT CHILI DE 14 G","type":"RLL"},{"client":"GONAC","code":"2-1435-645","description":"CHECHOS QUESO CHEDDAR DE 3 KG","type":"RLL"},{"client":"GONAC","code":"2-1435-651","description":"TORTILLIN ADOBO 15G","type":"RLL"},{"client":"GONAC","code":"2-1435-652","description":"DONITAS CHILE Y LIMON DE 6 G","type":"RLL"},{"client":"GONAC","code":"2-1435-659","description":"PALITOS HOT CHILI DE 16 G","type":"RLL"},{"client":"GONAC","code":"2-1435-664","description":"CHECHITOS FRANCESAS SN DE 9 G","type":"RLL"},{"client":"GONAC","code":"2-1435-668","description":"PAPA FRANCESA HOT CHILI DE 9 G","type":"RLL"},{"client":"GONAC","code":"2-1435-669","description":"CHARRON HOT CHILI PERSONAL DE 9 GRS","type":"RLL"},{"client":"GONAC","code":"2-1435-670","description":"CHARRON HOT CHILI DE 15 G","type":"RLL"},{"client":"GONAC","code":"2-1435-671","description":"PALITOS HOT CHILI DE 16 G","type":"RLL"},{"client":"GONAC","code":"2-1435-672","description":"DONITAS HOT CHILI DE 6 G","type":"RLL"},{"client":"GONAC","code":"2-1435-673","description":"DONITAS HOT CHILI DE 12 G","type":"RLL"},{"client":"GONAC","code":"2-1435-674","description":"PALITOS HOT CHILI DE 8 G","type":"RLL"},{"client":"GONAC","code":"2-1435-675","description":"DONITAS SAL Y LIMÓN DE 6 G","type":"RLL"},{"client":"GONAC","code":"2-1435-685","description":"CHECHOS","type":"PQ"},{"client":"ALIMENTOS","code":"2-1696-58","description":"BOLSA DE BASURA GRANDE AZUL","type":"CJ"},{"client":"ALSEA","code":"2-2005-51","description":"BOLSA VERDE","type":"CJ"},{"client":"GONAC_LERKA","code":"2-2067-1435-559","description":"CHIDAS DONITAS SAL Y LIMON 30 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-560","description":"CHIDAS PALITOS HOT CHILI 35 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-572","description":"OH RINGS CHILE LIMON 26 GR","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-600","description":"KIUBO DIPACHO 40 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-681","description":"KIUBO ROLLIX HOT CHILE 37 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-732","description":"CHIDAS MIX 55 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-783","description":"REMIX QUESO CHILE 35G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-832","description":"CHIDAS ADOBADAS 85 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-847","description":"CASERAS ZIGZAG 34 G","type":"PQ"},{"client":"GONAC_LERKA","code":"2-2067-1435-848","description":"KIUBO CASERAS FUEGO 34 G","type":"PQ"},{"client":"PANIF_ESPERANZA","code":"2-2103-10","description":"BOLSA NATURAL","type":"CJ"},{"client":"PANIF_ESPERANZA","code":"2-2103-11","description":"HOJA GOFRADA BONPANE","type":"CJ"},{"client":"PANIF_ESPERANZA","code":"2-2103-13","description":"HOJA GOFRADA LA ESPERANZA","type":"CJ"},{"client":"PANIF_ESPERANZA","code":"2-2103-14","description":"BOLSA NATURAL 60X90","type":"PQ"},{"client":"PANIF_ESPERANZA","code":"2-2103-5A","description":"BOLSA POLIPAPEL 26X32","type":"CJ"},{"client":"CAMO","code":"2-2221-110","description":"CAMPO FRESCO PRUEBA","type":"RLL"}];
 let PRODUCTS = EMBEDDED_PRODUCTS.slice();
@@ -417,6 +438,8 @@ function createSurtido() {
     createdDeviceId: deviceId(),
     offlineCreated: true,
     pallets: [{
+      id: uid("PAL"),
+    finalNumber: null,
       number: start,
       status: "Abierta",
       createdAt: created,
@@ -438,7 +461,7 @@ function createSurtido() {
 
   save();
   setScreen("capture");
-  toast(`Surtido creado · Tarima ${start}`);
+  toast("Surtido creado · Tarima provisional A");
 }
 function openSurtido(id){const s=state.surtidos.find(x=>x.id===id);if(!s)return;state.activeSurtidoId=id;const open=openPallet(s);state.currentPallet=open?.number||Math.max(1,...palletsOf(s).map(p=>Number(p.number)||1));save();setScreen('capture')}
 function updateProduct(){const code=$('matCode').value;const p=productByCode(code);if(p){$('matDescription').value=p.description||'';$('matClient').value=p.client||'';$('matType').value=['RLL','PQ','CJ','CJA'].includes(norm(p.type))?norm(p.type):'OTRO';$('productDescPreview').textContent=p.description||p.code;$('productClientPreview').textContent=`${p.client||'Sin cliente'} · ${p.type||''}`;$('productInfo').classList.remove('hidden')}else{$('productInfo').classList.add('hidden')}updateCaptureFields()}
@@ -455,36 +478,24 @@ function newPallet() {
   }
 
   const open = openPallet(s);
+
   if (open) {
-    return toast(`Primero cierra la Tarima ${open.number}`);
+    return toast(
+      `Primero cierra la Tarima ${pnNumber(s, open.number)}`
+    );
   }
 
-  const proposed = Math.max(
+  const number = Math.max(
     0,
     ...palletsOf(s).map(p => Number(p.number) || 0)
   ) + 1;
 
-  const answer = window.prompt(
-    "¿Qué número tendrá la nueva tarima?\nPuedes crear la 2 y después la 7, o la 5 y después la 3.",
-    String(proposed)
-  );
-
-  if (answer === null) return;
-
-  const number = Number(answer.trim());
-
-  if (!Number.isSafeInteger(number) || number < 1) {
-    return toast("Escribe un número entero mayor que cero");
-  }
-
-  if (palletsOf(s).some(p => Number(p.number) === number)) {
-    return toast(`La Tarima ${number} ya existe en este surtido`);
-  }
-
   s.pallets = s.pallets || [];
 
   s.pallets.push({
+    id: uid("PAL"),
     number,
+    finalNumber: null,
     status: "Abierta",
     createdAt: now(),
     createdBy: state.profile.name,
@@ -492,14 +503,93 @@ function newPallet() {
   });
 
   state.currentPallet = number;
+
   save();
 
-  toast(`Tarima ${number} abierta`);
+  toast(
+    `Tarima ${pnNumber(s, number)} abierta`
+  );
+}
+function assignFinalNumbers() {
+  const s = activeSurtido();
+
+  if (!s) {
+    return toast("Primero abre un surtido");
+  }
+
+  try {
+    const assignments = pnPlan(s);
+
+    if (!assignments) return;
+
+    const updated = clone(s);
+
+    pnApply(updated, assignments);
+
+    const surtidos = state.surtidos.map(
+      item => item.id === updated.id ? updated : item
+    );
+
+    const savedAt = now();
+
+    // Primero se guarda. Si falla, no se anuncia como guardado.
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...state,
+        surtidos,
+        savedAt
+      })
+    );
+
+    state.surtidos = surtidos;
+    state.savedAt = savedAt;
+
+    render();
+
+    toast("Números finales guardados");
+  } catch (e) {
+    toast(e.message);
+  }
 }
 function finalize(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)return toast(`Primero cierra Tarima ${open.number}`);if(!movementsOf(s).length)return toast('El surtido no tiene capturas');confirmAction('Finalizar surtido','Se marcará como finalizado y quedará listo para exportar a la PC.',()=>{s.status='Finalizado';s.finalizedAt=now();s.finalizedBy=state.profile.name;s.finalKg=sums(movementsOf(s)).kg;save();toast('Surtido finalizado')})}
 function packageHistory(){try{const a=JSON.parse(localStorage.getItem(PACKAGE_HISTORY_KEY)||'[]');return Array.isArray(a)?a:[]}catch{return[]}}
 function savePackageHistory(rec){const a=packageHistory();a.unshift(rec);try{localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(a.slice(0,30)))}catch{}render()}
-function buildPackage(scope='all') {let surtidos=scope==='active'?(activeSurtido()?[activeSurtido()]:[]):state.surtidos.filter(s=>movementsOf(s).length||s.pallets.length);return{format:FORMAT,version:1,packageId:uid('PKG'),createdAt:now(),device:{id:deviceId(),label:state.profile.deviceLabel||'Celular',platform:navigator.platform||navigator.userAgent||''},operator:{username:state.profile.username,name:state.profile.name,role:state.profile.role||'Operador'},activeSurtidoId:state.activeSurtidoId,pending:[],surtidos:clone(surtidos)}}
+function buildPackage(scope = "all") {
+  const surtidos = scope === "active"
+    ? (activeSurtido() ? [activeSurtido()] : [])
+    : state.surtidos.filter(
+        s => movementsOf(s).length || s.pallets.length
+      );
+
+  surtidos.forEach(pnPrepare);
+
+  return {
+    format: FORMAT,
+    version: 2,
+    packageId: uid("PKG"),
+    createdAt: now(),
+
+    device: {
+      id: deviceId(),
+      label: state.profile.deviceLabel || "Celular",
+      platform:
+        navigator.platform ||
+        navigator.userAgent ||
+        ""
+    },
+
+    operator: {
+      username: state.profile.username,
+      name: state.profile.name,
+      role: state.profile.role || "Operador"
+    },
+
+    activeSurtidoId: state.activeSurtidoId,
+    pending: [],
+    surtidos: clone(surtidos)
+  };
+}
 async function shareBlob(blob,filename,title){const file=new File([blob],filename,{type:'application/json'});try{if(navigator.canShare?.({files:[file]})){await navigator.share({title,text:'Transferencia de LYNOR Móvil',files:[file]});return 'shared'}}catch(e){if(e?.name==='AbortError')return'abort'}try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);return'download'}catch{return'failed'}}
 async function exportPackage(scope='all'){const pack=buildPackage(scope);if(!pack.surtidos.length)return toast('No hay surtidos para exportar');const first=pack.surtidos[0];const safe=String(first?.folio||'LYNOR').replace(/[^A-Za-z0-9_-]+/g,'-');const filename=`${safe}_${deviceId()}.lynorsync`;const blob=new Blob([JSON.stringify(pack,null,2)],{type:'application/json'});const result=await shareBlob(blob,filename,'Paquete LYNOR');if(result==='abort')return;if(result==='failed'){showPackageText(pack);return}savePackageHistory({packageId:pack.packageId,filename,createdAt:pack.createdAt,count:pack.surtidos.length});toast(result==='shared'?'Paquete listo para compartir':'Paquete .lynorsync generado')}
 function showPackageText(pack){const w=window.open('','_blank');if(w){w.document.write(`<pre>${esc(JSON.stringify(pack,null,2))}</pre>`);w.document.close()}else{toast('No se pudo generar el archivo en este navegador')}}
@@ -599,12 +689,13 @@ function renderProductSummary() {
     </article>
   `).join("");
 }
-function renderCapture(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)state.currentPallet=Number(open.number);const current=palletsOf(s).find(p=>Number(p.number)===Number(state.currentPallet))||palletsOf(s).at(-1);if(current)state.currentPallet=Number(current.number);const all=sums(movementsOf(s));const pm=sums(palletMoves(s,state.currentPallet));$('activeFolio').textContent=mobileSurtidoTitle(s);$('activeMeta').textContent=`${s.teamKey?`Equipo ${s.teamKey} · `:''}${s.destination||'Sin destino'} · ${s.reference||'Sin referencia'}`;$('activeStatus').textContent=s.status;$('activeStatus').className=s.status==='Finalizado'?'badge':'badge warn';$('currentPalletLabel').textContent=state.currentPallet;$('surtidoKgBanner').textContent=`${fmt(all.kg)} KG`;$('palletQty').textContent=fmt(pm.quantity,0);$('palletKg').textContent=fmt(pm.kg);$('palletMill').textContent=fmt(pm.mill,3);const closed=!open||s.status==='Finalizado';$('captureClosedNotice').classList.toggle('hidden',!closed||s.status==='Finalizado');$('captureFormCard').classList.toggle('hidden',closed||s.status==='Finalizado');$('closePalletBtn').classList.toggle('hidden',closed||s.status==='Finalizado');$('newPalletBtn').classList.toggle('hidden',s.status==='Finalizado');$('finalizeBtn').classList.toggle('hidden',s.status==='Finalizado');renderProductSummary();renderMovements(s,state.currentPallet);updateCaptureFields()}
+function renderCapture(){const s=activeSurtido();if(!s)return;const open=openPallet(s);if(open)state.currentPallet=Number(open.number);const current=palletsOf(s).find(p=>Number(p.number)===Number(state.currentPallet))||palletsOf(s).at(-1);if(current)state.currentPallet=Number(current.number);const all=sums(movementsOf(s));const pm=sums(palletMoves(s,state.currentPallet));$('activeFolio').textContent=mobileSurtidoTitle(s);$('activeMeta').textContent=`${s.teamKey?`Equipo ${s.teamKey} · `:''}${s.destination||'Sin destino'} · ${s.reference||'Sin referencia'}`;$('activeStatus').textContent=s.status;$('activeStatus').className=s.status==='Finalizado'?'badge':'badge warn';$('currentPalletLabel').textContent=pnNumber(s,state.currentPallet);$('surtidoKgBanner').textContent=`${fmt(all.kg)} KG`;$('palletQty').textContent=fmt(pm.quantity,0);$('palletKg').textContent=fmt(pm.kg);$('palletMill').textContent=fmt(pm.mill,3);const closed=!open||s.status==='Finalizado';$('captureClosedNotice').classList.toggle('hidden',!closed||s.status==='Finalizado');$('captureFormCard').classList.toggle('hidden',closed||s.status==='Finalizado');$('closePalletBtn').classList.toggle('hidden',closed||s.status==='Finalizado');$('newPalletBtn').classList.toggle('hidden',s.status==='Finalizado');$('finalizeBtn').classList.toggle('hidden',s.status==='Finalizado');renderProductSummary();renderMovements(s,state.currentPallet);updateCaptureFields()}
 function renderMovements(s,pallet){const c=$('movementList');const ms=palletMoves(s,pallet).slice().sort((a,b)=>String(b.capturedAt).localeCompare(String(a.capturedAt)));if(!ms.length){c.innerHTML='<div class="empty">Todavía no hay capturas en esta tarima.</div>';return}c.innerHTML=ms.map((m,i)=>`<article class="item recent-row"><div class="recent-num">${i+1}</div><div><strong>${esc(m.code)} · ${fmt(m.weight)} KG</strong><p>${esc(m.product)}<br>${esc(m.lot)} · Cant. ${fmt(m.quantity,0)}${num(m.mill)?` · ${fmt(m.mill,3)} MILL`:''}</p></div>${s.status==='En proceso'&&openPallet(s)&&Number(openPallet(s).number)===Number(pallet)?`<button class="danger-link" data-del-move="${esc(m.id)}">Quitar</button>`:''}</article>`).join('');c.querySelectorAll('[data-del-move]').forEach(b=>b.onclick=()=>deleteMovement(b.dataset.delMove))}
 function renderTransfer(){const c=$('packageHistory'),a=packageHistory();if(!a.length){c.innerHTML='<div class="empty">Todavía no has generado paquetes desde este celular.</div>';return}c.innerHTML=a.map(x=>`<article class="item"><div class="item-top"><div><strong>${esc(x.filename)}</strong><p>${dateTime(x.createdAt)} · ${x.count||1} surtido(s)</p></div><span class="badge blue">${esc(x.packageId||'PKG')}</span></div></article>`).join('')}
 function renderSettings(){$('settingsUsername').value=state.profile.username||'';$('settingsName').value=state.profile.name||'';$('settingsRole').value=state.profile.role||'Operador';$('settingsDeviceLabel').value=state.profile.deviceLabel||'';$('settingsDeviceId').textContent=deviceId();renderMobileDbInfo()}
 function initDatalist(){$('productCodes').innerHTML=PRODUCTS.map(p=>`<option value="${esc(p.code)}">${esc(p.description)}</option>`).join('')}
 function bind(){
+  $("assignFinalNumbersBtn").onclick = assignFinalNumbers;
   $("productSummaryScope").onchange = renderProductSummary;
  $('finishSetupBtn').onclick=finishSetup;$('createSurtidoBtn').onclick=createSurtido;$('backHomeBtn').onclick=()=>setScreen('home');$('matCode').addEventListener('change',updateProduct);$('matCode').addEventListener('input',()=>{const p=productByCode($('matCode').value);if(p)updateProduct()});$('matType').onchange=updateCaptureFields;document.querySelectorAll('input[name="rollMode"]').forEach(r=>r.onchange=updateCaptureFields);$('addMovementBtn').onclick=addMovement;$('closePalletBtn').onclick=closePallet;$('newPalletBtn').onclick=newPallet;$('finalizeBtn').onclick=finalize;$('exportCurrentBtn').onclick=()=>exportPackage('active');$('exportAllBtn').onclick=()=>exportPackage('all');$('transferExportAllBtn').onclick=()=>exportPackage('all');$('transferExportActiveBtn').onclick=()=>exportPackage('active');$('saveSettingsBtn').onclick=saveSettings;$('importMobileDbBtn').onclick=()=>$('mobileDbFile').click();$('mobileDbFile').onchange=e=>{importMobileDbFile(e.target.files?.[0]);e.target.value=''};$('restoreMobileDbBtn').onclick=restorePreviousMobileDb;$('backupBtn').onclick=exportBackup;$('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=e=>restoreBackup(e.target.files?.[0]);$('clearFinishedBtn').onclick=clearFinished;document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));$('modalCancel').onclick=closeModal;$('modalConfirm').onclick=()=>{const cb=modalCallback;closeModal();cb?.()};
 }

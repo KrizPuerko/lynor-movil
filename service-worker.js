@@ -1,7 +1,8 @@
-const CACHE_NAME = 'lynor-mobile-v3.2.8';
+const CACHE_NAME = 'lynor-mobile-v3.3.0';
 const APP_SHELL = [
   './',
   './index.html',
+  './numeracion-tarimas.js?v=3.3.0',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
