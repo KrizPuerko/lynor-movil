@@ -277,6 +277,161 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:
     </div>
 
     <div class="card">
+
+  <div class="section-title">
+
+    <div>
+
+      <span class="eyebrow">
+        ALTA RÁPIDA
+      </span>
+
+      <h3>
+        Agregar producto desde el celular
+      </h3>
+
+      <p>
+        Solo se muestran los productos agregados
+        desde este celular.
+        La base completa permanece oculta.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="grid2">
+
+    <label class="field">
+
+      <span>
+        Clave *
+      </span>
+
+      <input
+        id="mobileDbNewCode"
+        autocapitalize="characters"
+        autocomplete="off"
+        placeholder="Ej. 2-1435-999"
+      >
+
+    </label>
+
+
+    <label class="field">
+
+      <span>
+        Tipo *
+      </span>
+
+      <select id="mobileDbNewType">
+
+        <option value="RLL">
+          RLL
+        </option>
+
+        <option value="PQ">
+          PQ
+        </option>
+
+        <option value="CJ">
+          CJ
+        </option>
+
+        <option value="CJA">
+          CJA
+        </option>
+
+        <option value="OTRO">
+          OTRO
+        </option>
+
+      </select>
+
+    </label>
+
+  </div>
+
+
+  <label class="field">
+
+    <span>
+      Cliente
+    </span>
+
+    <input
+      id="mobileDbNewClient"
+      autocapitalize="characters"
+      placeholder="Ej. GONAC"
+    >
+
+  </label>
+
+
+  <label class="field">
+
+    <span>
+      Descripción *
+    </span>
+
+    <input
+      id="mobileDbNewDescription"
+      placeholder="Nombre del producto"
+    >
+
+  </label>
+
+
+  <button
+    id="mobileDbAddProductBtn"
+    class="btn primary block"
+    type="button"
+  >
+    + Agregar producto
+  </button>
+
+
+  <button
+    id="mobileDbCancelEditBtn"
+    class="btn ghost block mt8 hidden"
+    type="button"
+  >
+    Cancelar edición
+  </button>
+
+
+  <div class="note mt12">
+
+    <b>
+      Pendientes para PC:
+    </b>
+
+    <span id="mobileDbPendingCount">
+      0
+    </span>
+
+  </div>
+
+
+  <div
+    id="mobileDbPendingList"
+    class="list mt12"
+  >
+  </div>
+
+
+  <button
+    id="mobileDbShareUpdateBtn"
+    class="btn green block mt12"
+    type="button"
+  >
+    Compartir actualización para PC
+  </button>
+
+</div>
+
+    <div class="card">
       <div class="section-title"><div><span class="eyebrow">SEGURIDAD LOCAL</span><h3>Respaldo del celular</h3><p>Úsalo antes de borrar archivos, cambiar de navegador o cambiar de teléfono.</p></div></div>
       <div class="actions"><button id="backupBtn" class="btn ghost">Exportar respaldo</button><button id="restoreBtn" class="btn ghost">Importar respaldo</button></div>
       <input id="restoreFile" type="file" accept=".lynorbackup,application/json" class="hidden">
@@ -309,6 +464,7 @@ const PACKAGE_HISTORY_KEY='lynor-mobile-package-history-v1';
 const REVISION_BACKUP_KEY ='lynor-mobile-revision-backup-v1';
 const MOBILE_DB_KEY='lynor-mobile-products-db-v1';
 const MOBILE_DB_BACKUP_KEY='lynor-mobile-products-db-backup-v1';
+const MOBILE_DB_PENDING_KEY ='lynor-mobile-db-pending-v1';
 const FORMAT='LYNOR_SYNC';
 const $=id=>document.getElementById(id);
 const clone=v=>JSON.parse(JSON.stringify(v));
@@ -392,8 +548,20 @@ async function importMobileDbFile(file){
     confirmAction('Actualizar base de productos',`${current.totalProducts||PRODUCTS.length} productos → ${next.totalProducts} productos. Los surtidos guardados no se modificarán.`,()=>{
       try{
         localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(current));
-        saveMobileDb(next);
-        toast(`Base actualizada: ${next.totalProducts} productos`);
+        const merged =
+  rebuildMobileDbWithPending(
+    next
+  );
+
+
+saveMobileDb(
+  merged
+);
+
+
+toast(
+  `Base actualizada: ${merged.totalProducts} productos`
+);
       }catch(e){toast(e.message||'No se pudo guardar la base')}
     });
   }catch(e){toast(e.message||'No se pudo leer la base .lynordb')}
@@ -411,7 +579,1007 @@ function restorePreviousMobileDb(){
     });
   }catch(e){toast(e.message||'No se pudo restaurar la base')}
 }
+let mobileDbEditPendingId = '';
 
+
+function mobileDbPending() {
+
+  try {
+
+    const list =
+      JSON.parse(
+        localStorage.getItem(
+          MOBILE_DB_PENDING_KEY
+        )
+        ||
+        '[]'
+      );
+
+
+    return Array.isArray(list)
+      ?
+      list
+      :
+      [];
+
+  }
+
+  catch {
+
+    return [];
+
+  }
+
+}
+
+
+function saveMobileDbPending(
+  list
+) {
+
+  localStorage.setItem(
+
+    MOBILE_DB_PENDING_KEY,
+
+    JSON.stringify(
+      Array.isArray(list)
+      ?
+      list
+      :
+      []
+    )
+
+  );
+
+
+  renderMobileDbPending();
+
+}
+
+
+function resetMobileDbProductForm() {
+
+  mobileDbEditPendingId =
+    '';
+
+
+  $('mobileDbNewCode').value =
+    '';
+
+  $('mobileDbNewClient').value =
+    '';
+
+  $('mobileDbNewDescription').value =
+    '';
+
+  $('mobileDbNewType').value =
+    'RLL';
+
+
+  $('mobileDbAddProductBtn').textContent =
+    '+ Agregar producto';
+
+
+  $('mobileDbCancelEditBtn')
+    .classList
+    .add(
+      'hidden'
+    );
+
+}
+
+
+function rebuildMobileDbWithPending(
+  baseDb
+) {
+
+  const db =
+    clone(
+      baseDb
+    );
+
+
+  const byCode =
+    new Map(
+
+      (db.products || [])
+        .map(
+          p => [
+            norm(
+              p.code
+            ),
+            cleanMobileProduct(
+              p
+            )
+          ]
+        )
+
+    );
+
+
+  const stillPending =
+    [];
+
+
+  for (
+    const rec
+    of
+    mobileDbPending()
+  ) {
+
+    const key =
+      norm(
+        rec.code
+      );
+
+
+    /*
+      Si la nueva base que vino de la PC
+      ya contiene esta clave,
+      significa que la PC ya la conoce.
+    */
+
+    if (
+      byCode.has(
+        key
+      )
+    ) {
+
+      continue;
+
+    }
+
+
+    const p =
+      cleanMobileProduct(
+        rec
+      );
+
+
+    if (!p) {
+
+      continue;
+
+    }
+
+
+    byCode.set(
+      key,
+      p
+    );
+
+
+    stillPending.push(
+      rec
+    );
+
+  }
+
+
+  localStorage.setItem(
+
+    MOBILE_DB_PENDING_KEY,
+
+    JSON.stringify(
+      stillPending
+    )
+
+  );
+
+
+  db.products =
+    [
+      ...byCode.values()
+    ]
+
+      .filter(Boolean)
+
+      .sort(
+        (
+          a,
+          b
+        ) =>
+          norm(
+            a.code
+          )
+            .localeCompare(
+              norm(
+                b.code
+              )
+            )
+      );
+
+
+  db.totalProducts =
+    db.products.length;
+
+
+  return db;
+
+}
+
+
+function saveMobileDbProduct() {
+
+  const code =
+    norm(
+      $('mobileDbNewCode').value
+    );
+
+
+  const client =
+    $('mobileDbNewClient')
+      .value
+      .trim();
+
+
+  const description =
+    $('mobileDbNewDescription')
+      .value
+      .trim();
+
+
+  const type =
+    norm(
+      $('mobileDbNewType').value
+    );
+
+
+  if (!code) {
+
+    return toast(
+      'Captura la clave'
+    );
+
+  }
+
+
+  if (!description) {
+
+    return toast(
+      'Captura la descripción'
+    );
+
+  }
+
+
+  if (
+    ![
+      'RLL',
+      'PQ',
+      'CJ',
+      'CJA',
+      'OTRO'
+    ]
+      .includes(
+        type
+      )
+  ) {
+
+    return toast(
+      'Tipo inválido'
+    );
+
+  }
+
+
+  const pending =
+    mobileDbPending();
+
+
+  const editing =
+    pending.find(
+      item =>
+        item.id ===
+        mobileDbEditPendingId
+    )
+    ||
+    null;
+
+
+  const existing =
+    PRODUCTS.find(
+      p =>
+        norm(
+          p.code
+        )
+        ===
+        code
+    );
+
+
+  if (
+    existing
+    &&
+    (
+      !editing
+      ||
+      norm(
+        editing.code
+      )
+      !==
+      code
+    )
+  ) {
+
+    return toast(
+      'Esa clave ya existe en la base del celular'
+    );
+
+  }
+
+
+  if (
+    pending.some(
+      item =>
+        item.id !==
+        mobileDbEditPendingId
+        &&
+        norm(
+          item.code
+        )
+        ===
+        code
+    )
+  ) {
+
+    return toast(
+      'Esa clave ya está pendiente'
+    );
+
+  }
+
+
+  const stamp =
+    now();
+
+
+  const rec = {
+
+    id:
+      editing?.id
+      ||
+      uid(
+        'DBMOB'
+      ),
+
+    code,
+
+    client,
+
+    description,
+
+    type,
+
+    createdAt:
+      editing?.createdAt
+      ||
+      stamp,
+
+    updatedAt:
+      stamp,
+
+    deviceId:
+      deviceId(),
+
+    operator:
+      state.profile?.name
+      ||
+      state.profile?.username
+      ||
+      ''
+
+  };
+
+
+  const next =
+
+    editing
+
+    ?
+
+    pending.map(
+      item =>
+        item.id === rec.id
+        ?
+        rec
+        :
+        item
+    )
+
+    :
+
+    [
+      rec,
+      ...pending
+    ];
+
+
+  let products =
+    (mobileDb.products || [])
+
+      .filter(
+        p =>
+          editing
+          ?
+          norm(
+            p.code
+          )
+          !==
+          norm(
+            editing.code
+          )
+          :
+          true
+      )
+
+      .filter(
+        p =>
+          norm(
+            p.code
+          )
+          !==
+          code
+      );
+
+
+  products.push(
+    cleanMobileProduct(
+      rec
+    )
+  );
+
+
+  saveMobileDb({
+
+    ...mobileDb,
+
+    createdAt:
+      stamp,
+
+    source:
+      'MOVIL',
+
+    products,
+
+    totalProducts:
+      products.length
+
+  });
+
+
+  saveMobileDbPending(
+    next
+  );
+
+
+  resetMobileDbProductForm();
+
+
+  toast(
+
+    editing
+
+    ?
+
+    'Producto actualizado'
+
+    :
+
+    'Producto agregado al celular'
+
+  );
+
+}
+
+
+function editMobileDbPendingProduct(
+  id
+) {
+
+  const rec =
+    mobileDbPending()
+      .find(
+        item =>
+          item.id === id
+      );
+
+
+  if (!rec) {
+
+    return toast(
+      'Producto pendiente no encontrado'
+    );
+
+  }
+
+
+  mobileDbEditPendingId =
+    rec.id;
+
+
+  $('mobileDbNewCode').value =
+    rec.code
+    ||
+    '';
+
+
+  $('mobileDbNewClient').value =
+    rec.client
+    ||
+    '';
+
+
+  $('mobileDbNewDescription').value =
+    rec.description
+    ||
+    '';
+
+
+  $('mobileDbNewType').value =
+    rec.type
+    ||
+    'RLL';
+
+
+  $('mobileDbAddProductBtn').textContent =
+    'Guardar cambios';
+
+
+  $('mobileDbCancelEditBtn')
+    .classList
+    .remove(
+      'hidden'
+    );
+
+
+  $('mobileDbNewCode')
+    .focus();
+
+}
+
+
+function deleteMobileDbPendingProduct(
+  id
+) {
+
+  const rec =
+    mobileDbPending()
+      .find(
+        item =>
+          item.id === id
+      );
+
+
+  if (!rec) {
+
+    return;
+
+  }
+
+
+  confirmAction(
+
+    'Quitar producto',
+
+    `${rec.code} · ${rec.description}
+
+Se quitará de esta base móvil y del archivo pendiente para PC.`,
+
+    () => {
+
+      const next =
+        mobileDbPending()
+          .filter(
+            item =>
+              item.id !== id
+          );
+
+
+      const products =
+        (mobileDb.products || [])
+
+          .filter(
+            p =>
+              norm(
+                p.code
+              )
+              !==
+              norm(
+                rec.code
+              )
+          );
+
+
+      saveMobileDb({
+
+        ...mobileDb,
+
+        createdAt:
+          now(),
+
+        source:
+          'MOVIL',
+
+        products,
+
+        totalProducts:
+          products.length
+
+      });
+
+
+      saveMobileDbPending(
+        next
+      );
+
+
+      if (
+        mobileDbEditPendingId === id
+      ) {
+
+        resetMobileDbProductForm();
+
+      }
+
+
+      toast(
+        'Producto pendiente eliminado'
+      );
+
+    }
+
+  );
+
+}
+
+
+function renderMobileDbPending() {
+
+  if (
+    !$(
+      'mobileDbPendingList'
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const list =
+    mobileDbPending();
+
+
+  $('mobileDbPendingCount').textContent =
+    String(
+      list.length
+    );
+
+
+  $('mobileDbShareUpdateBtn').disabled =
+    list.length === 0;
+
+
+  if (
+    !list.length
+  ) {
+
+    $('mobileDbPendingList').innerHTML =
+      '<div class="empty">No hay productos nuevos pendientes para la PC.</div>';
+
+
+    return;
+
+  }
+
+
+  $('mobileDbPendingList').innerHTML =
+
+    list
+
+      .map(
+        rec => `
+
+          <article class="item">
+
+            <div class="item-top">
+
+              <div>
+
+                <strong>
+
+                  ${esc(rec.code)}
+                  ·
+                  ${esc(rec.type)}
+
+                </strong>
+
+                <p>
+
+                  ${esc(rec.description)}
+
+                  ${
+                    rec.client
+                    ?
+                    `<br>${esc(rec.client)}`
+                    :
+                    ''
+                  }
+
+                </p>
+
+              </div>
+
+
+              <button
+                class="danger-link"
+                type="button"
+                data-db-pending-delete="${esc(rec.id)}"
+              >
+                ×
+              </button>
+
+            </div>
+
+
+            <div class="actions mt8">
+
+              <button
+                class="btn ghost small"
+                type="button"
+                data-db-pending-edit="${esc(rec.id)}"
+              >
+                Editar
+              </button>
+
+            </div>
+
+          </article>
+
+        `
+      )
+
+      .join(
+        ''
+      );
+
+
+  $('mobileDbPendingList')
+
+    .querySelectorAll(
+      '[data-db-pending-edit]'
+    )
+
+    .forEach(
+      button => {
+
+        button.onclick =
+          () =>
+            editMobileDbPendingProduct(
+              button.dataset.dbPendingEdit
+            );
+
+      }
+    );
+
+
+  $('mobileDbPendingList')
+
+    .querySelectorAll(
+      '[data-db-pending-delete]'
+    )
+
+    .forEach(
+      button => {
+
+        button.onclick =
+          () =>
+            deleteMobileDbPendingProduct(
+              button.dataset.dbPendingDelete
+            );
+
+      }
+    );
+
+}
+
+
+async function exportMobileDbUpdate() {
+
+  const products =
+    mobileDbPending();
+
+
+  if (
+    !products.length
+  ) {
+
+    return toast(
+      'No hay productos pendientes para compartir'
+    );
+
+  }
+
+
+  const createdAt =
+    now();
+
+
+  const payload = {
+
+    format:
+      'LYNOR_DB_UPDATE',
+
+    version:
+      1,
+
+    updateId:
+      uid(
+        'DBUP'
+      ),
+
+    createdAt,
+
+    device: {
+
+      id:
+        deviceId(),
+
+      label:
+        state.profile?.deviceLabel
+        ||
+        'Celular'
+
+    },
+
+    operator: {
+
+      username:
+        state.profile?.username
+        ||
+        '',
+
+      name:
+        state.profile?.name
+        ||
+        '',
+
+      role:
+        state.profile?.role
+        ||
+        'Operador'
+
+    },
+
+    products:
+      products.map(
+        item => ({
+
+          id:
+            item.id,
+
+          code:
+            item.code,
+
+          client:
+            item.client,
+
+          description:
+            item.description,
+
+          type:
+            item.type,
+
+          createdAt:
+            item.createdAt,
+
+          updatedAt:
+            item.updatedAt
+
+        })
+      )
+
+  };
+
+
+  const d =
+    new Date();
+
+
+  const stamp =
+
+    `${d.getFullYear()}`
+
+    +
+
+    `${String(
+      d.getMonth() + 1
+    ).padStart(2, '0')}`
+
+    +
+
+    `${String(
+      d.getDate()
+    ).padStart(2, '0')}`
+
+    +
+
+    '-'
+
+    +
+
+    `${String(
+      d.getHours()
+    ).padStart(2, '0')}`
+
+    +
+
+    `${String(
+      d.getMinutes()
+    ).padStart(2, '0')}`;
+
+
+  const filename =
+
+    `LYNOR-BASE-MOVIL-${deviceId()}-${stamp}.lynordbupdate`;
+
+
+  const blob =
+    new Blob(
+
+      [
+        JSON.stringify(
+          payload,
+          null,
+          2
+        )
+      ],
+
+      {
+        type:
+          'application/json'
+      }
+
+    );
+
+
+  const result =
+    await shareBlob(
+
+      blob,
+
+      filename,
+
+      'Actualización de base LYNOR'
+
+    );
+
+
+  if (
+    result === 'abort'
+  ) {
+
+    return;
+
+  }
+
+
+  toast(
+
+    result === 'shared'
+
+    ?
+
+    'Actualización lista para compartir'
+
+    :
+
+    'Archivo de actualización generado'
+
+  );
+
+}
 function token(bytes=6){
   try{const a=new Uint8Array(bytes);crypto.getRandomValues(a);return [...a].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}catch{return Math.random().toString(36).slice(2,2+bytes*2).toUpperCase()}
 }
@@ -2055,8 +3223,32 @@ function buildPackage(scope = "all") {
 async function shareBlob(blob,filename,title){const file=new File([blob],filename,{type:'application/json'});try{if(navigator.canShare?.({files:[file]})){await navigator.share({title,text:'Transferencia de LYNOR Móvil',files:[file]});return 'shared'}}catch(e){if(e?.name==='AbortError')return'abort'}try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);return'download'}catch{return'failed'}}
 async function exportPackage(scope='all'){const pack=buildPackage(scope);if(!pack.surtidos.length)return toast('No hay surtidos para exportar');const first=pack.surtidos[0];const safe=String(first?.folio||'LYNOR').replace(/[^A-Za-z0-9_-]+/g,'-');const filename=`${safe}_${deviceId()}.lynorsync`;const blob=new Blob([JSON.stringify(pack,null,2)],{type:'application/json'});const result=await shareBlob(blob,filename,'Paquete LYNOR');if(result==='abort')return;if(result==='failed'){showPackageText(pack);return}savePackageHistory({packageId:pack.packageId,filename,createdAt:pack.createdAt,count:pack.surtidos.length});toast(result==='shared'?'Paquete listo para compartir':'Paquete .lynorsync generado')}
 function showPackageText(pack){const w=window.open('','_blank');if(w){w.document.write(`<pre>${esc(JSON.stringify(pack,null,2))}</pre>`);w.document.close()}else{toast('No se pudo generar el archivo en este navegador')}}
-function exportBackup(){const payload={format:'LYNOR_MOBILE_BACKUP',version:2,createdAt:now(),deviceId:deviceId(),state:clone(state),packages:packageHistory(),database:clone(mobileDb),databaseBackup:(()=>{try{const r=localStorage.getItem(MOBILE_DB_BACKUP_KEY);return r?JSON.parse(r):null}catch{return null}})()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});shareBlob(blob,`LYNOR-MOVIL-RESPALDO-${deviceId()}.lynorbackup`,'Respaldo LYNOR Móvil')}
-async function restoreBackup(file){if(!file)return;try{const obj=JSON.parse(await file.text());if(obj.format!=='LYNOR_MOBILE_BACKUP'||!obj.state)throw new Error('Respaldo inválido');confirmAction('Restaurar respaldo','Se reemplazarán los datos locales actuales de este navegador.',()=>{state=obj.state;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));if(Array.isArray(obj.packages))localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(obj.packages));if(obj.database){try{saveMobileDb(obj.database)}catch{}}if(obj.databaseBackup){try{localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(validateMobileDbObject(obj.databaseBackup)))}catch{}}setupCheck();render();renderMobileDbInfo();toast('Respaldo restaurado')})}catch(e){toast(e.message||'No se pudo leer el respaldo')}}
+function exportBackup(){const payload={format:'LYNOR_MOBILE_BACKUP',version:2,createdAt:now(),deviceId:deviceId(),state:clone(state),packages:packageHistory(),database:clone(mobileDb),databasePending:mobileDbPending(),databaseBackup:(()=>{try{const r=localStorage.getItem(MOBILE_DB_BACKUP_KEY);return r?JSON.parse(r):null}catch{return null}})()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});shareBlob(blob,`LYNOR-MOVIL-RESPALDO-${deviceId()}.lynorbackup`,'Respaldo LYNOR Móvil')}
+async function restoreBackup(file){if(!file)return;try{const obj=JSON.parse(await file.text());if(obj.format!=='LYNOR_MOBILE_BACKUP'||!obj.state)throw new Error('Respaldo inválido');confirmAction('Restaurar respaldo','Se reemplazarán los datos locales actuales de este navegador.',()=>{state=obj.state;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));if(Array.isArray(obj.packages))localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(obj.packages));if(obj.database){try{saveMobileDb(obj.database)}catch{}}
+if (
+  Array.isArray(
+    obj.databasePending
+  )
+) {
+
+  try {
+
+    localStorage.setItem(
+
+      MOBILE_DB_PENDING_KEY,
+
+      JSON.stringify(
+        obj.databasePending
+      )
+
+    );
+
+  }
+
+  catch {}
+
+}
+if(obj.databaseBackup){try{localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(validateMobileDbObject(obj.databaseBackup)))}catch{}}setupCheck();render();renderMobileDbInfo();toast('Respaldo restaurado')})}catch(e){toast(e.message||'No se pudo leer el respaldo')}}
 function saveSettings(){const u=$('settingsUsername').value.trim(),n=$('settingsName').value.trim();if(!u||!n)return toast('Usuario y nombre son obligatorios');state.profile={...state.profile,username:u,name:n,role:$('settingsRole').value,deviceLabel:$('settingsDeviceLabel').value.trim()||'Celular'};save();toast('Configuración guardada')}
 function deleteSavedSurtido(
   id
@@ -3136,11 +4328,21 @@ const canEdit =
 }
 
 function renderTransfer(){const c=$('packageHistory'),a=packageHistory();if(!a.length){c.innerHTML='<div class="empty">Todavía no has generado paquetes desde este celular.</div>';return}c.innerHTML=a.map(x=>`<article class="item"><div class="item-top"><div><strong>${esc(x.filename)}</strong><p>${dateTime(x.createdAt)} · ${x.count||1} surtido(s)</p></div><span class="badge blue">${esc(x.packageId||'PKG')}</span></div></article>`).join('')}
-function renderSettings(){$('settingsUsername').value=state.profile.username||'';$('settingsName').value=state.profile.name||'';$('settingsRole').value=state.profile.role||'Operador';$('settingsDeviceLabel').value=state.profile.deviceLabel||'';$('settingsDeviceId').textContent=deviceId();renderMobileDbInfo()}
+function renderSettings(){$('settingsUsername').value=state.profile.username||'';$('settingsName').value=state.profile.name||'';$('settingsRole').value=state.profile.role||'Operador';$('settingsDeviceLabel').value=state.profile.deviceLabel||'';$('settingsDeviceId').textContent=deviceId();renderMobileDbInfo();renderMobileDbPending();}
 function initDatalist(){$('productCodes').innerHTML=PRODUCTS.map(p=>`<option value="${esc(p.code)}">${esc(p.description)}</option>`).join('')}
 function bind(){
   $("assignFinalNumbersBtn").onclick = assignFinalNumbers;
   $("productSummaryScope").onchange = renderProductSummary;
+  $("mobileDbAddProductBtn").onclick =
+  saveMobileDbProduct;
+
+
+$("mobileDbCancelEditBtn").onclick =
+  resetMobileDbProductForm;
+
+
+$("mobileDbShareUpdateBtn").onclick =
+  exportMobileDbUpdate;
   $("revisionPalletSelect").onchange =
   () => {
 
@@ -3165,7 +4367,15 @@ $("cancelRevisionBtn").onclick =
   cancelRevision;
  $('finishSetupBtn').onclick=finishSetup;$('createSurtidoBtn').onclick=createSurtido;$('backHomeBtn').onclick=()=>setScreen('home');$('matCode').addEventListener('change',updateProduct);$('matCode').addEventListener('input',()=>{const p=productByCode($('matCode').value);if(p)updateProduct()});$('matType').onchange=updateCaptureFields;document.querySelectorAll('input[name="rollMode"]').forEach(r=>r.onchange=updateCaptureFields);$('addMovementBtn').onclick=addMovement;$('closePalletBtn').onclick=closePallet;$('newPalletBtn').onclick=newPallet;$('finalizeBtn').onclick=finalize;$('exportCurrentBtn').onclick=()=>exportPackage('active');$('exportAllBtn').onclick=()=>exportPackage('all');$('transferExportAllBtn').onclick=()=>exportPackage('all');$('transferExportActiveBtn').onclick=()=>exportPackage('active');$('saveSettingsBtn').onclick=saveSettings;$('importMobileDbBtn').onclick=()=>$('mobileDbFile').click();$('mobileDbFile').onchange=e=>{importMobileDbFile(e.target.files?.[0]);e.target.value=''};$('restoreMobileDbBtn').onclick=restorePreviousMobileDb;$('backupBtn').onclick=exportBackup;$('restoreBtn').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=e=>restoreBackup(e.target.files?.[0]);$('clearFinishedBtn').onclick=clearFinished;document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>setScreen(b.dataset.screen));$('modalCancel').onclick=closeModal;$('modalConfirm').onclick=()=>{const cb=modalCallback;closeModal();cb?.()};
 }
-initDatalist();bind();renderMobileDbInfo();setupCheck();
+initDatalist();
+
+bind();
+
+renderMobileDbInfo();
+
+renderMobileDbPending();
+
+setupCheck();
 </script>
 
 <script>
