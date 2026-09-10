@@ -2058,6 +2058,101 @@ function showPackageText(pack){const w=window.open('','_blank');if(w){w.document
 function exportBackup(){const payload={format:'LYNOR_MOBILE_BACKUP',version:2,createdAt:now(),deviceId:deviceId(),state:clone(state),packages:packageHistory(),database:clone(mobileDb),databaseBackup:(()=>{try{const r=localStorage.getItem(MOBILE_DB_BACKUP_KEY);return r?JSON.parse(r):null}catch{return null}})()};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});shareBlob(blob,`LYNOR-MOVIL-RESPALDO-${deviceId()}.lynorbackup`,'Respaldo LYNOR Móvil')}
 async function restoreBackup(file){if(!file)return;try{const obj=JSON.parse(await file.text());if(obj.format!=='LYNOR_MOBILE_BACKUP'||!obj.state)throw new Error('Respaldo inválido');confirmAction('Restaurar respaldo','Se reemplazarán los datos locales actuales de este navegador.',()=>{state=obj.state;localStorage.setItem(STORAGE_KEY,JSON.stringify(state));if(Array.isArray(obj.packages))localStorage.setItem(PACKAGE_HISTORY_KEY,JSON.stringify(obj.packages));if(obj.database){try{saveMobileDb(obj.database)}catch{}}if(obj.databaseBackup){try{localStorage.setItem(MOBILE_DB_BACKUP_KEY,JSON.stringify(validateMobileDbObject(obj.databaseBackup)))}catch{}}setupCheck();render();renderMobileDbInfo();toast('Respaldo restaurado')})}catch(e){toast(e.message||'No se pudo leer el respaldo')}}
 function saveSettings(){const u=$('settingsUsername').value.trim(),n=$('settingsName').value.trim();if(!u||!n)return toast('Usuario y nombre son obligatorios');state.profile={...state.profile,username:u,name:n,role:$('settingsRole').value,deviceLabel:$('settingsDeviceLabel').value.trim()||'Celular'};save();toast('Configuración guardada')}
+function deleteSavedSurtido(
+  id
+) {
+
+  const s =
+    state.surtidos.find(
+      item =>
+        item.id === id
+    );
+
+
+  if (!s) {
+
+    return toast(
+      'Surtido no encontrado'
+    );
+
+  }
+
+
+  if (
+    s.status !== 'Finalizado'
+  ) {
+
+    return toast(
+      'Solo puedes borrar surtidos finalizados'
+    );
+
+  }
+
+
+  confirmAction(
+
+    'Borrar surtido',
+
+    `${mobileSurtidoTitle(s)}\n\nEsta copia se eliminará solamente de este celular.`,
+
+    () => {
+
+      state.surtidos =
+        state.surtidos.filter(
+          item =>
+            item.id !== id
+        );
+
+
+      if (
+        state.activeSurtidoId === id
+      ) {
+
+        state.activeSurtidoId =
+          '';
+
+      }
+
+
+      try {
+
+        const backup =
+          JSON.parse(
+            localStorage.getItem(
+              REVISION_BACKUP_KEY
+            )
+            ||
+            'null'
+          );
+
+
+        if (
+          backup?.surtido?.id === id
+        ) {
+
+          localStorage.removeItem(
+            REVISION_BACKUP_KEY
+          );
+
+        }
+
+      }
+
+      catch {}
+
+
+      save();
+
+
+      toast(
+        'Surtido borrado del celular'
+      );
+
+    }
+
+  );
+
+}
 function clearFinished(){const count=state.surtidos.filter(s=>s.status==='Finalizado').length;if(!count)return toast('No hay surtidos finalizados');confirmAction('Borrar surtidos finalizados',`Se eliminarán ${count} surtido(s) de este celular. Haz un respaldo antes si quieres conservarlos.`,()=>{const ids=new Set(state.surtidos.filter(s=>s.status==='Finalizado').map(s=>s.id));state.surtidos=state.surtidos.filter(s=>!ids.has(s.id));if(ids.has(state.activeSurtidoId))state.activeSurtidoId='';save();toast('Surtidos finalizados borrados')})}
 let modalCallback=null;function confirmAction(title,text,cb){modalCallback=cb;$('modalTitle').textContent=title;$('modalText').textContent=text;$('confirmModal').classList.remove('hidden')}function closeModal(){modalCallback=null;$('confirmModal').classList.add('hidden')}
 function render(){if(!state.profile)return;const s=activeSurtido();$('topUser').textContent=`${state.profile.name} · ${deviceId()}`;$('homeDevice').textContent=deviceId();$('homeInProgress').textContent=state.surtidos.filter(x=>x.status==='En proceso').length;$('homeFinished').textContent=state.surtidos.filter(x=>x.status==='Finalizado').length;renderSurtidos();renderCapture();renderTransfer();renderSettings()}
@@ -2150,17 +2245,61 @@ function renderSurtidos() {
                 </div>
 
 
-                <span class="${badge}">
+                <div
+  style="
+    display:flex;
+    align-items:center;
+    gap:8px;
+  "
+>
 
-                  ${
-                    revision
-                    ?
-                    'REVISIÓN'
-                    :
-                    esc(s.status)
-                  }
+  <span class="${badge}">
 
-                </span>
+    ${
+      revision
+      ?
+      'REVISIÓN'
+      :
+      esc(s.status)
+    }
+
+  </span>
+
+
+  ${
+    s.status === 'Finalizado'
+
+    ?
+
+    `
+      <button
+        type="button"
+        data-delete-surtido="${esc(s.id)}"
+        title="Borrar surtido"
+        aria-label="Borrar surtido"
+        style="
+          width:30px;
+          height:30px;
+          border:0;
+          border-radius:50%;
+          background:#fee2e2;
+          color:#b91c1c;
+          font-size:18px;
+          font-weight:900;
+          line-height:1;
+          cursor:pointer;
+        "
+      >
+        ×
+      </button>
+    `
+
+    :
+
+    ''
+  }
+
+</div>
 
               </div>
 
@@ -2281,6 +2420,28 @@ function renderSurtidos() {
 
       }
     );
+
+    c
+  .querySelectorAll(
+    '[data-delete-surtido]'
+  )
+  .forEach(
+    button => {
+
+      button.onclick =
+        event => {
+
+          event.stopPropagation();
+
+
+          deleteSavedSurtido(
+            button.dataset.deleteSurtido
+          );
+
+        };
+
+    }
+  );
 
 
   c
